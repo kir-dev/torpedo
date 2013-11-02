@@ -3,14 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math"
 	"math/rand"
 	"strconv"
 )
-
-var _ = rand.ExpFloat64 //TODO: delete before commit
-var _ = errors.New      //TODO: delete before commit
 
 const (
 	SIZE = 26
@@ -41,19 +37,21 @@ type Board struct {
 
 // Places the appropriate number of ships on the board randomly. The number of
 // ships is based on the current average score for the players in the game.
-func (board *Board) placeShips(player *Player) {
+func (board *Board) placeShips(player *Player) error {
 	scores := make([]float64, len(currentGame.Players))
 	for idx, p := range currentGame.Players {
 		scores[idx] = p.getCurrentScore()
 	}
 
 	avg := average(scores)
+	logInfo("average board score is %f", avg)
 	if len(currentGame.Players) == 0 {
 		avg = BASE_SCORE
 	}
 
 	deployment := computeShipDeployment(avg)
-	board.deployShips(player, deployment)
+	logInfo("Deployment for %s player: %v", player.Name, deployment)
+	return board.deployShips(player, deployment)
 }
 
 func (board *Board) deployShips(player *Player, deployment []int) error {
@@ -72,9 +70,11 @@ func (board *Board) deployShips(player *Player, deployment []int) error {
 		}
 
 		if len(fields) != len(ship.Parts) {
-			msg := fmt.Sprintf("number of selected fields (%d) does not match the number of ship parts (%d)",
-				len(fields), len(ship.Parts))
-			log.Println("ERROR: " + msg)
+			msg := fmt.Sprintf(
+				"Number of selected fields (%d) does not match the number of ship parts (%d)",
+				len(fields),
+				len(ship.Parts),
+			)
 			return errors.New(msg)
 		}
 
@@ -118,10 +118,7 @@ func (board *Board) chooseFields(size, row, col int) ([]*Field, error) {
 
 // Slice in a specific direction
 func (b *Board) fieldsInSlot(row, col, offset int, dir direction, slot gap) []*Field {
-	if isDev() {
-		log.Printf("Picking fields [%d, %d] in %s", slot.start+offset, slot.end+offset, dir.toString())
-	}
-
+	logDebug("Picking fields [%d, %d] in %s", slot.start+offset, slot.end+offset, dir.toString())
 	if dir == ROW {
 		return b.Fields[row][slot.start+offset : slot.end+offset+1]
 	}

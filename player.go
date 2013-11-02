@@ -1,9 +1,5 @@
 package main
 
-import (
-	"log"
-)
-
 type Player struct {
 	Name  string
 	IsBot bool
@@ -17,15 +13,19 @@ func newPlayer(name string) *Player {
 
 // Adds a player to the registry.
 func join(player *Player) error {
+	logInfo("New player (with name: %s) attempts to join the game.", player.Name)
 	if player.hasAlreadyJoined() {
 		return errorf("Player with name %s has already joined the game.", player.Name)
 	}
 
-	currentGame.Board.placeShips(player)
+	err := currentGame.Board.placeShips(player)
+	if err != nil {
+		return err
+	}
+
 	currentGame.addPlayer(player)
 
-	log.Printf("Player with name %s has joined the game.", player.Name)
-
+	logInfo("Player with name %s has joined the game.", player.Name)
 	return nil
 }
 
@@ -55,5 +55,4 @@ func (player *Player) hasAlreadyJoined() bool {
 		}
 	}
 	return false
-
 }

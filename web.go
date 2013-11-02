@@ -117,5 +117,5 @@ func covertCheckboxValueToBool(value string) bool {
 
 // creates the message for 404
 func messageFor404(req *http.Request) string {
-	return fmt.Sprintf("No registered route found for: [%s] %s", req.Method, req.RequestURI)
+	return fmt.Sprintf("(404) Not found: [%s] %s", req.Method, req.RequestURI)
 }

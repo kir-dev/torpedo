@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"time"
-	// "net/http"
 	"math/rand"
+	"net/http"
 	"os"
+	"time"
 )
 
 const (
@@ -20,16 +21,11 @@ type content struct {
 func main() {
 	rand.Seed(time.Now().Unix())
 	log.SetOutput(os.Stdout)
-	// fmt.Println("Starting on port 8080...")
-
-	// log.Fatal(http.ListenAndServe(":8080", nil))
 	startNewGame()
-	join(newPlayer("Player1"))
-	join(newPlayer("Player2"))
-	join(newPlayer("Player3"))
-	join(newPlayer("Player4"))
-	currentGame.Board.print()
 
+	fmt.Println("Starting on port 8080...")
+	fmt.Println("Press Ctrl-C to exit!")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func isDev() bool {
