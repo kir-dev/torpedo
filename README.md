@@ -35,7 +35,7 @@ Fejlesztői környezet
 Legyen nálad Go telepítve ([link](http://golang.org/doc/install#install)). Után
 töltsd le a forráskódot `go get` segítségével.
 
-    $ go get github.com/kirdev/torpedo
+    $ go get github.com/kir-dev/torpedo
 
 Vagy állítsd be a `$GOPATH` változót és klónozd a repót, ahogy mindig is
 szoktad. Utána futass `go build`-et.
