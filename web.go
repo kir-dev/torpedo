@@ -24,7 +24,7 @@ var (
 	// template cache
 	templates = template.Must(template.ParseGlob("template/*.html.go"))
 	// to avoid initialization loop compilation error...
-	routes = make([]string, 5)
+	routes = make([]string, 0, 5)
 )
 
 // register handlers for routes
