@@ -11,8 +11,8 @@ func init() {
 }
 
 func TestPlayerJoins(t *testing.T) {
-	StartNewGame()
-	Join(NewPlayer("test"))
+	startNewGame()
+	join(newPlayer("test"))
 
 	if len(currentGame.Players) < 1 {
 		t.Error("Player could not join the game.")
@@ -20,11 +20,11 @@ func TestPlayerJoins(t *testing.T) {
 }
 
 func TestPlayerCannotJoinTwice(t *testing.T) {
-	StartNewGame()
-	player := NewPlayer("test")
+	startNewGame()
+	player := newPlayer("test")
 
-	Join(player)
-	Join(player)
+	join(player)
+	join(player)
 
 	if len(currentGame.Players) > 1 {
 		t.Error("Player joined twice.")
@@ -32,10 +32,10 @@ func TestPlayerCannotJoinTwice(t *testing.T) {
 }
 
 func TestPlayerHasAlredyJoined(t *testing.T) {
-	StartNewGame()
+	startNewGame()
 
-	player := NewPlayer("test")
-	Join(player)
+	player := newPlayer("test")
+	join(player)
 
 	if !player.hasAlreadyJoined() {
 		t.Error("Player should have been marked as joined.")
@@ -43,10 +43,10 @@ func TestPlayerHasAlredyJoined(t *testing.T) {
 }
 
 func TestPlayerHasAlreadyJoinedIsIndependentFromThePlayerObject(t *testing.T) {
-	StartNewGame()
+	startNewGame()
 
-	Join(NewPlayer("test"))
-	player := NewPlayer("test")
+	join(newPlayer("test"))
+	player := newPlayer("test")
 
 	if !player.hasAlreadyJoined() {
 		t.Error("Player should have been marked as joined.")

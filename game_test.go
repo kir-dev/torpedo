@@ -9,7 +9,7 @@ func TestAddingPlayerToGame(t *testing.T) {
 
 	playerCount := len(g.Players)
 
-	g.AddPlayer(NewPlayer("Teszt Elek"))
+	g.addPlayer(newPlayer("Teszt Elek"))
 
 	if playerCount >= len(g.Players) {
 		t.Error("Player was not added to the game")
@@ -17,7 +17,7 @@ func TestAddingPlayerToGame(t *testing.T) {
 }
 
 func TestInitBoardOnStart(t *testing.T) {
-	g := StartNewGame()
+	g := startNewGame()
 
 	for i, row := range g.Board.Fields {
 		for j, f := range row {

@@ -25,7 +25,7 @@ func TestComputeDeployments(t *testing.T) {
 }
 
 func TestGetColumn(t *testing.T) {
-	board := StartNewGame().Board
+	board := startNewGame().Board
 	fields := board.getColumn(1, 1, 3)
 
 	if len(fields) != 2 {

@@ -34,7 +34,7 @@ func TestShipIsSunkenWithOneUnbrokenPart(t *testing.T) {
 }
 
 func TestIntactShipHasBaseScore(t *testing.T) {
-	s := NewShip(5)
+	s := newShip(5)
 
 	if s.getScore() != baseShipScore[5] {
 		t.Error("Intact ship should have its base score")
