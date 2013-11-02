@@ -8,6 +8,6 @@ type Field struct {
 	ShipPart *ShipPart
 }
 
-func (f Field) isFree() bool {
+func (f Field) IsFree() bool {
 	return f.ShipPart == nil
 }
