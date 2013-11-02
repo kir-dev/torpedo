@@ -1,0 +1,9 @@
+table#board td.field {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #000;
+}
+
+table#board td.ship-block {
+    background-color: #000;
+}

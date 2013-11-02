@@ -22,7 +22,7 @@ var (
 		"/view": viewHandler,
 	}
 	// template cache
-	templates = template.Must(template.ParseGlob("template/*.html.go"))
+	templates = template.New("root")
 	// to avoid initialization loop compilation error...
 	routes = make([]string, 0, 5)
 )
@@ -33,6 +33,9 @@ func init() {
 		http.HandleFunc(route, handler)
 		routes = append(routes, route)
 	}
+
+	templates.Funcs(utilFuncMap())
+	templates = template.Must(templates.ParseGlob("template/*.html.go"))
 }
 
 // welcome page with registration
@@ -76,7 +79,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 
 // view handler -- shows information about the current game
 func viewHandler(rw http.ResponseWriter, req *http.Request) {
-	renderTemplate(rw, VIEW_TEMPLATE, currentGame.Players)
+	renderTemplate(rw, VIEW_TEMPLATE, currentGame)
 }
 
 func check404(w http.ResponseWriter, req *http.Request) error {
@@ -106,7 +109,10 @@ func getFullTempalteName(tmplName string) string {
 // cached version.
 func renderTemplate(w http.ResponseWriter, tmplName string, data interface{}) {
 	if isDev() {
-		tmpl, err := template.ParseFiles("template/" + getFullTempalteName(tmplName))
+		tmpl := template.New(getFullTempalteName(tmplName))
+		tmpl.Funcs(utilFuncMap())
+		//tmpl, err := template.ParseFiles("template/" + getFullTempalteName(tmplName))
+		tmpl, err := tmpl.ParseFiles("template/" + getFullTempalteName(tmplName))
 		if err != nil {
 			fmt.Fprintf(w, "Error in template:\n%s", err.Error())
 
