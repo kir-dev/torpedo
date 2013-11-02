@@ -145,7 +145,7 @@ func (board *Board) print() {
 	for i, row := range board.Fields {
 		fmt.Printf("%02d: ", i+1)
 		for _, field := range row {
-			if field.IsFree() {
+			if field.IsEmpty() {
 				fmt.Print("_")
 			} else {
 				fmt.Print("X")

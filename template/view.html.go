@@ -23,7 +23,7 @@
                 <tr>
                     <td>{{add $col 1}}</td>
                     {{range .}}
-                        <td class="field {{if not .IsFree}}ship-block{{end}}"></td>
+                        <td class="field {{if not .IsEmpty}}ship-block{{end}}"></td>
                     {{end}}
                 </tr>
             {{end}}
