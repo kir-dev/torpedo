@@ -24,6 +24,7 @@ var (
 		"/join":  joinHandler,
 		"/view":  viewHandler,
 		"/shoot": shootHandler,
+		"/quit":  quitHandler,
 	}
 	// template cache
 	templates = template.New("root")
@@ -137,6 +138,28 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	renderTemplate(w, SHOOT_TEMPLATE, feedback)
+}
+
+// Makes the player quit the game, sets the player to be a bot for the rest of
+// the game. There is no re-entry option.
+func quitHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(PLAYER_ID_COOKIE)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+
+	for _, player := range currentGame.Players {
+		// if player exists, set it to be a bot
+		if player.Id == cookie.Value {
+			player.IsBot = true
+			break
+		}
+	}
+	// delete the cookie
+	cookie.MaxAge = -1
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 /**** utility methods ****/
