@@ -19,12 +19,13 @@ type content struct {
 }
 
 func main() {
+	fmt.Println("Starting on port 8080...")
+	fmt.Println("Press Ctrl-C to exit!")
+
 	rand.Seed(time.Now().Unix())
 	log.SetOutput(os.Stdout)
 	startNewGame()
 
-	fmt.Println("Starting on port 8080...")
-	fmt.Println("Press Ctrl-C to exit!")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 

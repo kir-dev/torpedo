@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	welcomeTemplate = "welcome"
-	viewTemplate    = "view"
+	WELCOME_TEMPLATE = "welcome"
+	VIEW_TEMPLATE    = "view"
+	ERROR_TEMPLATE   = "error"
 )
 
 var (
@@ -43,7 +44,7 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	renderTemplate(w, welcomeTemplate, nil)
+	renderTemplate(w, WELCOME_TEMPLATE, nil)
 }
 
 // join handler
@@ -54,8 +55,18 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 			covertCheckboxValueToBool(req.FormValue("is_robot")),
 			nil,
 		}
-		join(&player)
-		http.Redirect(rw, req, "/view", http.StatusFound)
+		err := join(&player)
+		if err != nil {
+			logWarn("Player could not join. Cause: %s", err.Error())
+			renderTemplate(rw, ERROR_TEMPLATE, errorView{
+				// TODO: move to properties file
+				"Játékos nem tudott csatlakozni.",
+				err.Error(),
+				isDev(),
+			})
+		} else {
+			http.Redirect(rw, req, "/view", http.StatusFound)
+		}
 
 	} else {
 		http.NotFound(rw, req)
@@ -65,7 +76,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 
 // view handler -- shows information about the current game
 func viewHandler(rw http.ResponseWriter, req *http.Request) {
-	renderTemplate(rw, viewTemplate, currentGame.Players)
+	renderTemplate(rw, VIEW_TEMPLATE, currentGame.Players)
 }
 
 func check404(w http.ResponseWriter, req *http.Request) error {

@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+type errorView struct {
+	Title   string
+	Message string
+	IsDev   bool
+}
+
 func average(numbers []float64) float64 {
 	if len(numbers) == 0 {
 		return 0.0
