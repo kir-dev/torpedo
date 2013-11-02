@@ -4,6 +4,14 @@ table#board td.field {
     border: 1px solid #000;
 }
 
-table#board td.ship-block {
-    background-color: #000;
+table#board td.ship {
+    background-color: #818181;
+}
+
+table#board td.hit {
+    background-color: #ecb0cb;
+}
+
+table#board td.ship.hit {
+    background-color: #f36420;
 }

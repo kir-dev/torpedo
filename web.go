@@ -6,20 +6,24 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 const (
 	WELCOME_TEMPLATE = "welcome"
 	VIEW_TEMPLATE    = "view"
 	ERROR_TEMPLATE   = "error"
+	SHOOT_TEMPLATE   = "shoot"
+	PLAYER_ID_COOKIE = "id"
 )
 
 var (
 	// registered routes, with handlers
-	routesMap = map[string]func(http.ResponseWriter, *http.Request){
-		"/":     rootHandler,
-		"/join": joinHandler,
-		"/view": viewHandler,
+	routesMap = map[string]http.HandlerFunc{
+		"/":      rootHandler,
+		"/join":  joinHandler,
+		"/view":  viewHandler,
+		"/shoot": shootHandler,
 	}
 	// template cache
 	templates = template.New("root")
@@ -38,6 +42,8 @@ func init() {
 	templates = template.Must(templates.ParseGlob("template/*.html.go"))
 }
 
+/******* handlers ******/
+
 // welcome page with registration
 // also every not registered routes will throw a 404
 func rootHandler(w http.ResponseWriter, req *http.Request) {
@@ -52,13 +58,21 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 
 // join handler
 func joinHandler(rw http.ResponseWriter, req *http.Request) {
+	_, err := req.Cookie(PLAYER_ID_COOKIE)
+	if err == nil {
+		// TODO: proper error handling
+		fmt.Fprint(rw, "Cannot join twice.")
+		return
+	}
+
 	if req.Method == "POST" {
-		player := Player{
-			req.FormValue("username"),
-			covertCheckboxValueToBool(req.FormValue("is_robot")),
-			nil,
-		}
-		err := join(&player)
+		player := newPlayer(req.FormValue("username"))
+		player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
+		// TODO: check for uniqueness
+		player.Id = generateId()
+		currentGame.CurrentPlayerId = player.Id
+
+		err := join(player)
 		if err != nil {
 			logWarn("Player could not join. Cause: %s", err.Error())
 			renderTemplate(rw, ERROR_TEMPLATE, errorView{
@@ -68,6 +82,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 				isDev(),
 			})
 		} else {
+			http.SetCookie(rw, &http.Cookie{Name: PLAYER_ID_COOKIE, Value: player.Id, HttpOnly: true})
 			http.Redirect(rw, req, "/view", http.StatusFound)
 		}
 
@@ -80,6 +95,63 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 // view handler -- shows information about the current game
 func viewHandler(rw http.ResponseWriter, req *http.Request) {
 	renderTemplate(rw, VIEW_TEMPLATE, currentGame)
+}
+
+// shoot handler
+func shootHandler(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(PLAYER_ID_COOKIE)
+
+	// the play might not be registered
+	if err != nil {
+		// TODO: error handling
+		fmt.Fprint(w, "Join the game first!")
+		return
+	}
+
+	var feedback shootResult
+	if r.Method == "POST" {
+		// check if the player is up
+		if currentGame.CurrentPlayerId != cookie.Value {
+			// TODO: error handling
+			fmt.Fprint(w, "It's not your turn!")
+			return
+		}
+
+		colS := r.FormValue("col")
+		rowS := r.FormValue("row")
+
+		row, err := strconv.Atoi(rowS)
+		if renderParseError(w, err) {
+			return
+		}
+		// 0 based indexing
+		row -= 1
+
+		if len(colS) == 0 && renderParseError(w, errors.New("Column should be [A-Z]")) {
+			return
+		}
+		col := int(colS[0] - 'A')
+
+		logInfo("Shooting at (col: %d, row: %d)", col, row)
+		feedback = currentGame.shootAt(row, col)
+	}
+
+	renderTemplate(w, SHOOT_TEMPLATE, feedback)
+}
+
+/**** utility methods ****/
+
+func renderParseError(w http.ResponseWriter, err error) bool {
+	if err != nil {
+		renderTemplate(w, ERROR_TEMPLATE, errorView{
+			"Could not parse integer",
+			err.Error(),
+			isDev(),
+		})
+		return true
+	}
+	return false
+
 }
 
 func check404(w http.ResponseWriter, req *http.Request) error {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
 )
@@ -80,4 +81,10 @@ func minInt(x, y int) int {
 
 func errorf(format string, vars ...interface{}) error {
 	return errors.New(fmt.Sprintf(format, vars...))
+}
+
+func generateId() string {
+	id := make([]byte, 20)
+	rand.Read(id)
+	return fmt.Sprintf("%x", id)
 }

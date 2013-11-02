@@ -4,11 +4,12 @@ type Player struct {
 	Name  string
 	IsBot bool
 	Ships []*Ship
+	Id    string
 }
 
 // creates a new player
 func newPlayer(name string) *Player {
-	return &Player{name, false, nil}
+	return &Player{name, false, nil, ""}
 }
 
 // Adds a player to the registry.
