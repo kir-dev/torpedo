@@ -37,15 +37,15 @@ type Board struct {
 
 // Places the appropriate number of ships on the board randomly. The number of
 // ships is based on the current average score for the players in the game.
-func (board *Board) placeShips(player *Player) error {
-	scores := make([]float64, len(currentGame.Players))
-	for idx, p := range currentGame.Players {
+func (board *Board) placeShips(allPlayers []*Player, player *Player) error {
+	scores := make([]float64, len(allPlayers))
+	for idx, p := range allPlayers {
 		scores[idx] = p.getCurrentScore()
 	}
 
 	avg := average(scores)
 	logInfo("average board score is %f", avg)
-	if len(currentGame.Players) == 0 {
+	if len(allPlayers) == 0 {
 		avg = BASE_SCORE
 	}
 

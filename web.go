@@ -73,7 +73,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 		player.Id = generateId()
 		currentGame.CurrentPlayerId = player.Id
 
-		err := join(player)
+		err := player.join(currentGame)
 		if err != nil {
 			logWarn("Player could not join. Cause: %s", err.Error())
 			renderTemplate(rw, ERROR_TEMPLATE, errorView{

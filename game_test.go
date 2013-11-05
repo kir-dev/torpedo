@@ -17,7 +17,7 @@ func TestAddingPlayerToGame(t *testing.T) {
 }
 
 func TestInitBoardOnStart(t *testing.T) {
-	g := startNewGame()
+	g := newGame()
 
 	for i, row := range g.Board.Fields {
 		for j, f := range row {

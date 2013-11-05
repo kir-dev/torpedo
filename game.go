@@ -6,18 +6,14 @@ type Game struct {
 	CurrentPlayerId string
 }
 
-var (
-	currentGame Game
-)
-
 type hitResult string
 
-// Starts a new game.
-func startNewGame() Game {
-	logInfo("Starting a new game.")
-	currentGame = Game{}
+// Creates a new game, but does not start it.
+func newGame() *Game {
+	logInfo("Creating a new game.")
+	game := Game{}
 
-	board := &currentGame.Board
+	board := &game.Board
 
 	for i, row := range board.Fields {
 		for j, _ := range row {
@@ -25,7 +21,7 @@ func startNewGame() Game {
 		}
 	}
 
-	return currentGame
+	return &game
 }
 
 func (g *Game) addPlayer(player *Player) {
@@ -47,4 +43,18 @@ func (g *Game) shootAt(row, col int) hitResult {
 	}
 
 	return result
+}
+
+func (game *Game) hasAlreadyJoined(player *Player) bool {
+	for _, p := range game.Players {
+		if p.Name == player.Name {
+			return true
+		}
+	}
+	return false
+}
+
+// Starts the game.
+func (g *Game) start() {
+
 }

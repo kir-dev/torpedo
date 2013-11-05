@@ -14,6 +14,10 @@ const (
 	DEV = "development"
 )
 
+var (
+	currentGame *Game
+)
+
 type content struct {
 	Title string
 }
@@ -27,7 +31,7 @@ func main() {
 
 	rand.Seed(time.Now().Unix())
 	log.SetOutput(os.Stdout)
-	startNewGame()
+	currentGame = newGame()
 
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	log.Fatal(http.ListenAndServe(":8080", nil))

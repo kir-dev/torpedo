@@ -13,18 +13,18 @@ func newPlayer(name string) *Player {
 }
 
 // Adds a player to the registry.
-func join(player *Player) error {
+func (player *Player) join(game *Game) error {
 	logInfo("New player (with name: %s) attempts to join the game.", player.Name)
-	if player.hasAlreadyJoined() {
+	if game.hasAlreadyJoined(player) {
 		return errorf("Player with name %s has already joined the game.", player.Name)
 	}
 
-	err := currentGame.Board.placeShips(player)
+	err := game.Board.placeShips(game.Players, player)
 	if err != nil {
 		return err
 	}
 
-	currentGame.addPlayer(player)
+	game.addPlayer(player)
 
 	logInfo("Player with name %s has joined the game.", player.Name)
 	return nil
@@ -47,13 +47,4 @@ func (player Player) getCurrentScore() float64 {
 		sum += ship.getScore()
 	}
 	return sum
-}
-
-func (player *Player) hasAlreadyJoined() bool {
-	for _, p := range currentGame.Players {
-		if p.Name == player.Name {
-			return true
-		}
-	}
-	return false
 }
