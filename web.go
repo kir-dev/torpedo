@@ -109,7 +109,7 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var feedback shootResult
+	var feedback hitResult
 	if r.Method == "POST" {
 		// check if the player is up
 		if currentGame.CurrentPlayerId != cookie.Value {

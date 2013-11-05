@@ -10,7 +10,7 @@ var (
 	currentGame Game
 )
 
-type shootResult string
+type hitResult string
 
 // Starts a new game.
 func startNewGame() Game {
@@ -32,18 +32,18 @@ func (g *Game) addPlayer(player *Player) {
 	g.Players = append(g.Players, player)
 }
 
-func (g *Game) shootAt(row, col int) shootResult {
+func (g *Game) shootAt(row, col int) hitResult {
 	field := g.Board.Fields[row][col]
 
 	if field.IsHit {
-		return shootResult("invalid")
+		return hitResult("invalid")
 	}
 
-	result := shootResult("miss")
+	result := hitResult("miss")
 	field.IsHit = true
 	if !field.IsEmpty() {
 		field.ShipPart.IsHit = true
-		result = shootResult("hit")
+		result = hitResult("hit")
 	}
 
 	return result
