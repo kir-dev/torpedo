@@ -56,5 +56,20 @@ func (game *Game) hasAlreadyJoined(player *Player) bool {
 
 // Starts the game.
 func (g *Game) start() {
+}
 
+// Gets the next player in the game. Order based on first came first serve.
+func (g *Game) getNextPlayer(playerId string) (*Player, error) {
+	for i := range g.Players {
+		if g.Players[i].Id == playerId {
+			// when we reach the last player, select the first one again
+			if len(g.Players) == i+1 {
+				return g.Players[0], nil
+			} else {
+				return g.Players[i+1], nil
+			}
+		}
+	}
+
+	return nil, errorf("No such player: %s", playerId)
 }

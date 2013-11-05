@@ -9,7 +9,8 @@ type Player struct {
 
 // creates a new player
 func newPlayer(name string) *Player {
-	return &Player{name, false, nil, ""}
+	// TODO check for ID uniqueness
+	return &Player{name, false, nil, generateId()}
 }
 
 // Adds a player to the registry.
