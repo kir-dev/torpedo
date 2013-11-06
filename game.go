@@ -7,6 +7,7 @@ import (
 )
 
 type Game struct {
+	Id              string
 	Board           *Board
 	Players         []*Player
 	Winner          *Player
@@ -19,8 +20,12 @@ type Game struct {
 
 // Creates a new game, but does not start it.
 func newGame() *Game {
-	logInfo("Creating a new game.")
+	id := generateId()
+
+	logInfo("Creating a new game with id: %s.", id)
 	game := Game{}
+
+	game.Id = id
 	game.Board = &Board{}
 	game.isStarted = false
 

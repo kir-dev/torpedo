@@ -15,6 +15,7 @@ const (
 	ERROR_TEMPLATE   = "error"
 	SHOOT_TEMPLATE   = "shoot"
 	PLAYER_ID_COOKIE = "id"
+	GAME_ID_COOKIE   = "gid"
 )
 
 var (
@@ -54,15 +55,34 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	http.SetCookie(w, &http.Cookie{Name: GAME_ID_COOKIE, Value: currentGame.Id, HttpOnly: true})
 	renderTemplate(w, WELCOME_TEMPLATE, nil)
 }
 
 // join handler
 func joinHandler(rw http.ResponseWriter, req *http.Request) {
-	_, err := req.Cookie(PLAYER_ID_COOKIE)
-	if err == nil {
-		// TODO: proper error handling
-		fmt.Fprint(rw, "Cannot join twice.")
+	var canJoin bool
+
+	gid, errGid := req.Cookie(GAME_ID_COOKIE)
+	_, errPid := req.Cookie(PLAYER_ID_COOKIE)
+
+	switch {
+	case errGid != nil:
+		// no game id cookie -> did not participate in any game before
+		canJoin = true
+	case gid.Value != currentGame.Id:
+		// game id is not the current game's id, so it can join again
+		canJoin = true
+	case gid.Value == currentGame.Id && errPid == nil:
+		// has the current game's id and the player id as well -> cannot join
+		canJoin = false
+	case errPid != nil:
+		// does not have a player id -> automatically qualifies for join
+		canJoin = true
+	}
+
+	if !canJoin {
+		renderError(rw, errorf("You are already playing! You cannot join twice."))
 		return
 	}
 
@@ -172,6 +192,14 @@ func renderParseError(w http.ResponseWriter, err error) bool {
 	}
 	return false
 
+}
+
+func renderError(w http.ResponseWriter, err error) {
+	renderTemplate(w, ERROR_TEMPLATE, errorView{
+		err.Error(),
+		err.Error(),
+		isDev(),
+	})
 }
 
 func check404(w http.ResponseWriter, req *http.Request) error {
