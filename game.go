@@ -14,6 +14,7 @@ type Game struct {
 	playerJoinedCh  chan int
 	endTurn         chan int
 	mu              sync.Mutex
+	isStarted       bool
 }
 
 // Creates a new game, but does not start it.
@@ -21,12 +22,12 @@ func newGame() *Game {
 	logInfo("Creating a new game.")
 	game := Game{}
 	game.Board = &Board{}
+	game.isStarted = false
 
 	// init channels
 	game.playerJoinedCh = make(chan int)
 
 	board := game.Board
-
 	for i, row := range board.Fields {
 		for j, _ := range row {
 			board.Fields[i][j] = new(Field)
@@ -41,7 +42,7 @@ func (g *Game) addPlayer(player *Player) {
 	g.Players = append(g.Players, player)
 	g.mu.Unlock()
 
-	if !isTest() {
+	if !isTest() && !g.isStarted {
 		g.playerJoinedCh <- len(g.Players)
 	}
 }
@@ -77,6 +78,7 @@ func (g *Game) step() {
 	for {
 		numberOfPlayers := <-g.playerJoinedCh
 		if numberOfPlayers > 1 {
+			g.isStarted = true
 			break
 		}
 	}
