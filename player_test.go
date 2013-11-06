@@ -52,3 +52,20 @@ func TestPlayerHasAlreadyJoinedIsIndependentFromThePlayerObject(t *testing.T) {
 		t.Error("Player should have been marked as joined.")
 	}
 }
+
+func TestGetTheNumberOfWorkingShips(t *testing.T) {
+	p := newPlayer("t1")
+	if n := len(p.getWorkingShips()); n != 0 {
+		t.Errorf("Expected 0 but got %d", n)
+	}
+}
+
+func TestGetWorkingShips(t *testing.T) {
+	p := newPlayer("t1")
+	p.Ships = append(p.Ships, newShip(2))
+
+	if n := len(p.getWorkingShips()); n != 1 {
+		t.Errorf("Expected 1 but got %d", n)
+	}
+
+}
