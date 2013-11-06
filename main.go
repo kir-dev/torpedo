@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	ENV = "ENV"
-	DEV = "development"
+	ENV               = "ENV"
+	DEV               = "development"
+	TEST              = "test"
+	TURN_DURATION_SEC = 30
 )
 
 var (
@@ -32,6 +34,7 @@ func main() {
 	rand.Seed(time.Now().Unix())
 	log.SetOutput(os.Stdout)
 	currentGame = newGame()
+	currentGame.start()
 
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -40,4 +43,8 @@ func main() {
 
 func isDev() bool {
 	return os.Getenv(ENV) == "" || os.Getenv(ENV) == DEV
+}
+
+func isTest() bool {
+	return os.Getenv(ENV) == TEST
 }

@@ -22,6 +22,7 @@ type Ship struct {
 type ShipPart struct {
 	Field *Field
 	IsHit bool
+	Ship  *Ship
 }
 
 // Creates a new ship with the specfied number of parts. Every part is empty,
@@ -31,7 +32,7 @@ func newShip(numberOfParts int) *Ship {
 
 	ship.Parts = make([]*ShipPart, numberOfParts)
 	for i := 0; i < numberOfParts; i++ {
-		ship.Parts[i] = &ShipPart{IsHit: false}
+		ship.Parts[i] = &ShipPart{IsHit: false, Ship: &ship}
 	}
 	return &ship
 }

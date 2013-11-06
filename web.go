@@ -69,9 +69,6 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == "POST" {
 		player := newPlayer(req.FormValue("username"))
 		player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
-		// TODO: check for uniqueness
-		player.Id = generateId()
-		currentGame.CurrentPlayerId = player.Id
 
 		err := player.join(currentGame)
 		if err != nil {
@@ -133,8 +130,8 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		col := int(colS[0] - 'A')
 
-		logInfo("Shooting at (col: %d, row: %d)", col, row)
-		feedback = currentGame.shootAt(row, col)
+		logInfo("Player shot at (%s)", rcToS(row, col))
+		feedback = currentGame.Board.shootAt(row, col, currentGame.endTurn)
 	}
 
 	renderTemplate(w, SHOOT_TEMPLATE, feedback)

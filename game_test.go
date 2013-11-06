@@ -70,3 +70,51 @@ func TestGetNextPlayerShouldReturnFirstPlayerIfCurrentIsTheLast(t *testing.T) {
 		t.Errorf("Next player should be %v, but got %v.", player1, p)
 	}
 }
+
+func TestIsAllBotWithOneHumanPlayer(t *testing.T) {
+	g := newGame()
+
+	p := newPlayer("t1")
+	p.IsBot = true
+	p.join(g)
+
+	newPlayer("t2").join(g)
+
+	if g.isAllBot() == true {
+		t.Errorf("There is one human player, should've returned false.")
+	}
+}
+
+func TestIsAllBot(t *testing.T) {
+	g := newGame()
+
+	p := newPlayer("t1")
+	p.IsBot = true
+	p.join(g)
+
+	p = newPlayer("t2")
+	p.IsBot = true
+	p.join(g)
+
+	if g.isAllBot() == false {
+		t.Errorf("There is no human player, should've returned true.")
+	}
+}
+
+func TestHasWinner(t *testing.T) {
+	g := newGame()
+	p1 := newPlayer("t1")
+	p1.Ships = append(p1.Ships, newShip(2))
+	p2 := newPlayer("t2")
+
+	g.Players = append(g.Players, p1, p2)
+
+	result, winner := g.hasWinner()
+
+	if !result {
+		t.Fatal("No winner found, but there should be one.")
+	}
+	if winner != p1 {
+		t.Errorf("Expected winner: %s, got: %s", p1.Name, winner.Name)
+	}
+}

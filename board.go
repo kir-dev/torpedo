@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"strconv"
 	"sync"
-	"time"
 )
 
 const (
@@ -199,7 +198,7 @@ func computeShipDeployment(boardAverage float64) []int {
 }
 
 // Shoot at a coordinate on the game's board
-func (b *Board) shootAt(row, col int, ticker *time.Ticker) hitResult {
+func (b *Board) shootAt(row, col int, endTurn chan<- int) hitResult {
 	field := b.Fields[row][col]
 
 	if field.IsHit {
@@ -217,8 +216,8 @@ func (b *Board) shootAt(row, col int, ticker *time.Ticker) hitResult {
 	}
 
 	// signal the timer that this turn ended
-	if ticker != nil {
-		ticker.Stop()
+	if endTurn != nil {
+		close(endTurn)
 	}
 
 	return result

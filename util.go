@@ -88,3 +88,8 @@ func generateId() string {
 	rand.Read(id)
 	return fmt.Sprintf("%x", id)
 }
+
+// Row-column to string
+func rcToS(row, col int) string {
+	return fmt.Sprintf("(%s, %d)", string(col+65), row+1)
+}
