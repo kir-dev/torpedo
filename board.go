@@ -6,6 +6,8 @@ import (
 	"math"
 	"math/rand"
 	"strconv"
+	"sync"
+	"time"
 )
 
 const (
@@ -16,6 +18,15 @@ const (
 	ROW direction = iota
 	COLUMN
 )
+
+const (
+	HIT      = hitResult("hit")
+	HIT_SUNK = hitResult("hit&sunk")
+	MISS     = hitResult("miss")
+	INVALID  = hitResult("invalid")
+)
+
+type hitResult string
 
 type direction int
 
@@ -33,6 +44,7 @@ func (d direction) toString() string {
 // Represents the board of the game
 type Board struct {
 	Fields [SIZE][SIZE]*Field
+	mu     sync.Mutex
 }
 
 // Places the appropriate number of ships on the board randomly. The number of
@@ -54,7 +66,12 @@ func (board *Board) placeShips(allPlayers []*Player, player *Player) error {
 	return board.deployShips(player, deployment)
 }
 
+// Deploy ships to on board for the given player.
 func (board *Board) deployShips(player *Player, deployment []int) error {
+	// lock this method. only one player can deploy ships at once
+	board.mu.Lock()
+	defer board.mu.Unlock()
+
 	ships := make([]*Ship, len(deployment))
 	for idx, size := range deployment {
 		ship := newShip(size)
@@ -179,4 +196,30 @@ func computeShipDeployment(boardAverage float64) []int {
 	}
 
 	return deployment
+}
+
+// Shoot at a coordinate on the game's board
+func (b *Board) shootAt(row, col int, ticker *time.Ticker) hitResult {
+	field := b.Fields[row][col]
+
+	if field.IsHit {
+		return INVALID
+	}
+
+	result := MISS
+	field.IsHit = true
+	if !field.IsEmpty() {
+		field.ShipPart.IsHit = true
+		if field.ShipPart.Ship.isSunken() {
+			result = HIT_SUNK
+		}
+		result = HIT
+	}
+
+	// signal the timer that this turn ended
+	if ticker != nil {
+		ticker.Stop()
+	}
+
+	return result
 }
