@@ -19,6 +19,7 @@ const (
 var (
 	currentGame *Game
 	configPath  = flag.String("config", "", "Path of the config file. If left empty, default config will be loaded.")
+	port        = flag.String("port", ":8080", "Port to bind to.")
 	conf        = defaultConfig()
 )
 
@@ -29,7 +30,7 @@ type content struct {
 func main() {
 	flag.Parse()
 
-	fmt.Println("Starting on port 8080...")
+	fmt.Printf("Starting on port %s...\n", *port)
 	if isDev() {
 		fmt.Println("Started in DEVELOPMENT mode.")
 	}
@@ -49,7 +50,7 @@ func main() {
 	currentGame.start()
 
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(*port, nil))
 
 }
 
