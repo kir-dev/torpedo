@@ -12,6 +12,7 @@ type Game struct {
 	Players         []*Player
 	Winner          *Player
 	CurrentPlayerId string
+	EndCh           chan<- int
 	playerJoinedCh  chan int
 	endTurn         chan int
 	mu              sync.Mutex
@@ -40,6 +41,13 @@ func newGame() *Game {
 	}
 
 	return &game
+}
+
+func newGameWithEndChannel(end chan<- int) *Game {
+	g := newGame()
+	g.EndCh = end
+
+	return g
 }
 
 func (g *Game) addPlayer(player *Player) {
@@ -113,6 +121,7 @@ func (g *Game) step() {
 	}
 
 	// TODO: signal the view: game ended, we have a winner
+	g.EndCh <- 1 // signal the main loop
 }
 
 // Starts a new turn for a player. Block while the player's turn ends.

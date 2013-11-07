@@ -18,16 +18,16 @@ const (
 
 var (
 	currentGame *Game
-	configPath  = flag.String("config", "", "Path of the config file. If left empty, default config will be loaded.")
-	port        = flag.String("port", ":8080", "Port to bind to.")
-	conf        = defaultConfig()
+
+	configPath = flag.String("config", "", "Path of the config file. If left empty, default config will be loaded.")
+	port       = flag.String("port", ":8080", "Port to bind to.")
+	conf       = defaultConfig()
 )
 
-type content struct {
-	Title string
-}
-
 func main() {
+	rand.Seed(time.Now().Unix())
+	log.SetOutput(os.Stdout)
+
 	flag.Parse()
 
 	fmt.Printf("Starting on port %s...\n", *port)
@@ -44,14 +44,25 @@ func main() {
 
 	logInfo("Loaded config: %#v", conf)
 
-	rand.Seed(time.Now().Unix())
-	log.SetOutput(os.Stdout)
-	currentGame = newGame()
-	currentGame.start()
+	// start main loop for the application
+	go mainLoop()
 
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	log.Fatal(http.ListenAndServe(*port, nil))
 
+}
+
+// main loop for the program, starts new game when needed
+func mainLoop() {
+	endGame := make(chan int)
+
+	for {
+		currentGame = newGameWithEndChannel(endGame)
+		currentGame.start()
+
+		<-endGame
+		// TODO: archive game before creating a new one
+	}
 }
 
 func isDev() bool {
