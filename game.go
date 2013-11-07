@@ -124,8 +124,8 @@ func (g *Game) doTurn(player *Player) {
 
 	// when the player is a bot, just shoot and end the turn
 	if player.IsBot {
-		if g.isAllBot() {
-			time.Sleep(time.Second * 5)
+		if g.isAllBot() && conf.WaitForBots {
+			time.Sleep(time.Second * time.Duration(conf.BotTurnDurationSec))
 		}
 		g.shootForAI()
 	} else {
@@ -194,7 +194,7 @@ func measureTurnTime(endTurn chan int) {
 		case now := <-ticker.C:
 			elapsed = now.Sub(start).Seconds()
 			logDebug("Tick: %f", elapsed)
-			if elapsed >= TURN_DURATION_SEC {
+			if elapsed >= float64(conf.TurnDurationSec) {
 				ticker.Stop()
 				endTurn <- 1
 			}

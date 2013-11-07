@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"math/rand"
@@ -10,14 +11,15 @@ import (
 )
 
 const (
-	ENV               = "ENV"
-	DEV               = "development"
-	TEST              = "test"
-	TURN_DURATION_SEC = 30
+	ENV  = "ENV"
+	DEV  = "development"
+	TEST = "test"
 )
 
 var (
 	currentGame *Game
+	configPath  = flag.String("config", "", "Path of the config file. If left empty, default config will be loaded.")
+	conf        = defaultConfig()
 )
 
 type content struct {
@@ -25,11 +27,21 @@ type content struct {
 }
 
 func main() {
+	flag.Parse()
+
 	fmt.Println("Starting on port 8080...")
 	if isDev() {
 		fmt.Println("Started in DEVELOPMENT mode.")
 	}
 	fmt.Println("Press Ctrl-C to exit!")
+	fmt.Println()
+
+	// load config
+	if *configPath != "" {
+		conf = loadConfig(*configPath)
+	}
+
+	logInfo("Loaded config: %#v", conf)
 
 	rand.Seed(time.Now().Unix())
 	log.SetOutput(os.Stdout)

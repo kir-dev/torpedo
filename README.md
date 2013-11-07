@@ -41,3 +41,33 @@ Vagy állítsd be a `$GOPATH` változót és klónozd a repót, ahogy mindig is
 szoktad. Utána futass `go build`-et.
 
 Szerkeszőtnek én a Sublime Text 2/3 + GoSublime kombót ajánlom.
+
+Testek futtatás
+---------------
+
+A teszteket a következő paranccsal futtathatjuk:
+
+    ENV=test go test
+
+A környzeti változó beállítása szükséges, mert egyelőre még vannak olyan
+kódrészek, amik teszt környezetben nem futnak le. Ezek főleg a `channel`-ek
+környékén fordulnak elő. Tervben van, hogy refaktorálunk és egy szebb megoldást
+használunk helyettük.
+
+Futtatás
+--------
+
+Futtasunk egy `go build`-et, hogy legyen binárisunk. Utána már tudjuk futtatni:
+
+    ./torpedo [-config /path/to/config.json]
+
+A konfigurációs fájl felépítése:
+
+    {
+        "turn_duration":30,
+        "bot_turn_duration":5,
+        "wait_for_bots":true
+    }
+
+Amennyiben nem adunk meg konfigurációs fájlt, úgy a fent látható értékekkel
+indul el a program.
