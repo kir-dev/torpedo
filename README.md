@@ -47,7 +47,7 @@ Testek futtatás
 
 A teszteket a következő paranccsal futtathatjuk:
 
-    ENV=test go test
+    $ ENV=test go test
 
 A környzeti változó beállítása szükséges, mert egyelőre még vannak olyan
 kódrészek, amik teszt környezetben nem futnak le. Ezek főleg a `channel`-ek
@@ -59,7 +59,7 @@ Futtatás
 
 Futtasunk egy `go build`-et, hogy legyen binárisunk. Utána már tudjuk futtatni:
 
-    ./torpedo [-config /path/to/config.json]
+    $ ./torpedo [-config /path/to/config.json] [-port :8080]
 
 A konfigurációs fájl felépítése:
 
@@ -71,3 +71,17 @@ A konfigurációs fájl felépítése:
 
 Amennyiben nem adunk meg konfigurációs fájlt, úgy a fent látható értékekkel
 indul el a program.
+
+### Alternatív futtatás
+
+A `scripts/` mappában találhatóak segéd scriptek, amikkel könnyen futtathatjuk
+programot.
+
+Fordít és (alapbeállításokkal) futtat a háttérben:
+
+    $ scripts/run.sh
+
+PID és log a `torpedo.(pid|log)` fájlba mentődik. Az előbb elindított process
+leállítása:
+
+    $ scripts/stop.sh
