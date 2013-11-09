@@ -47,12 +47,9 @@ Tesztek futtatás
 
 A teszteket a következő paranccsal futtathatjuk:
 
-    $ ENV=test go test
+    $ scripts/test.sh
 
-A környezeti változó beállítása szükséges, mert egyelőre még vannak olyan
-kódrészek, amik teszt környezetben nem futnak le. Ezek főleg a `channel`-ek
-környékén fordulnak elő. Tervben van, hogy refaktorálunk és egy szebb megoldást
-használunk helyettük.
+Ez egymás után lefuttatja az `engine`, `util` és a `main` package tesztjeit.
 
 Futtatás
 --------
