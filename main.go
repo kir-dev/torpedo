@@ -18,13 +18,14 @@ var (
 )
 
 func main() {
-
 	fmt.Printf("Starting on port %s...\n", *port)
 	if util.IsDev() {
 		fmt.Println("Started in DEVELOPMENT mode.")
 	}
 	fmt.Println("Press Ctrl-C to exit!")
 	fmt.Println()
+
+	initialize()
 
 	// start main loop for the application
 	go mainLoop()

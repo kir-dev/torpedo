@@ -152,8 +152,8 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		col := int(colS[0] - 'A')
 
-		util.LogInfo("Player shot at (%s)", engine.RowColToS(row, col))
 		feedback = currentGame.Shoot(row, col)
+		util.LogInfo("Player shot at (%s) with result: %s", engine.RowColToS(row, col), feedback)
 	}
 
 	renderTemplate(w, SHOOT_TEMPLATE, feedback)

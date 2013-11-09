@@ -212,8 +212,9 @@ func (b *Board) shootAt(row, col int, endTurn chan<- int) HitResult {
 		field.ShipPart.IsHit = true
 		if field.ShipPart.Ship.isSunken() {
 			result = HIT_SUNK
+		} else {
+			result = HIT
 		}
-		result = HIT
 	}
 
 	// signal the timer that this turn ended

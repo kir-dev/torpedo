@@ -29,6 +29,7 @@ type config struct {
 
 func LoadConfig(path string) config {
 	if path == "" {
+		util.LogDebug("Loaded default config.")
 		return defaultConfig()
 	}
 

@@ -7,23 +7,39 @@ import (
 	"time"
 )
 
+// Listener interface. Implement this interface, and register views via
+// Game#RegisterView to get notifications about certain game events.
+type ViewReporter interface {
+	// Called when a player after the player shot.
+	ReportHitResult(row, col int, result HitResult)
+	// Called when there are enough players to start the game.
+	ReportGameStarted()
+	// Called when the game ends.
+	ReportGameOver(winner *Player)
+	// Called on every second with the already elapsed seconds in the player's
+	// turn.
+	ReportElapsedTime(elapsed float64)
+}
+
 type Game struct {
 	Id              string
 	Board           *Board
 	Players         []*Player
 	Winner          *Player
 	CurrentPlayerId string
-	EndCh           chan<- int
-	playerJoinedCh  chan int
-	endTurn         chan int
-	mu              sync.Mutex
-	isStarted       bool
+
+	views          []ViewReporter
+	endCh          chan<- int
+	playerJoinedCh chan int
+	endTurn        chan int
+	mu             sync.Mutex
+	isStarted      bool
 }
 
 // Creates a new game with a channel on which it will signal when the game ends.
 func NewGame(end chan<- int) *Game {
 	g := newGame()
-	g.EndCh = end
+	g.endCh = end
 
 	return g
 }
@@ -34,7 +50,13 @@ func (g *Game) Start() {
 }
 
 func (g *Game) Shoot(row, col int) HitResult {
-	return g.Board.shootAt(row, col, g.endTurn)
+	result := g.Board.shootAt(row, col, g.endTurn)
+	g.notifyViewsAfterShot(row, col, result)
+	return result
+}
+
+func (g *Game) RegisterView(reporter ViewReporter) {
+	g.views = append(g.views, reporter)
 }
 
 // Creates a new game, but does not start it.
@@ -102,17 +124,21 @@ func (g *Game) step() {
 		}
 	}
 
+	// notify views that the game started
+	for _, reporter := range g.views {
+		reporter.ReportGameStarted()
+	}
+
 	// we have enough players so start the first player's turn
 	g.doTurn(g.Players[0])
 
-	// main event loop
+	// game event loop
 	for {
 		// check if we have a winner
-		// when we do, break the main loop
+		// when we do, break the game loop
 		if result, winner := g.hasWinner(); result {
 			g.Winner = winner
 			util.LogInfo("The winner is: %s", winner.Name)
-			// TODO: handle winner
 			break
 		}
 
@@ -126,8 +152,11 @@ func (g *Game) step() {
 		g.doTurn(player)
 	}
 
-	// TODO: signal the view: game ended, we have a winner
-	g.EndCh <- 1 // signal the main loop
+	// notify views
+	for _, reporter := range g.views {
+		reporter.ReportGameOver(g.Winner)
+	}
+	g.endCh <- 1 // signal the main loop
 }
 
 // Starts a new turn for a player. Block while the player's turn ends.
@@ -146,7 +175,7 @@ func (g *Game) doTurn(player *Player) {
 	} else {
 		// human player have time to react
 		g.endTurn = make(chan int)
-		go measureTurnTime(g.endTurn)
+		go g.measureTurnTime()
 
 		<-g.endTurn
 	}
@@ -193,14 +222,19 @@ func (g *Game) hasWinner() (bool, *Player) {
 
 func (g *Game) shootForAI() {
 	row, col := rand.Intn(SIZE), rand.Intn(SIZE)
-	for g.Board.shootAt(row, col, nil) == INVALID {
+	result := g.Board.shootAt(row, col, nil)
+
+	for result == INVALID {
 		row, col = rand.Intn(SIZE), rand.Intn(SIZE)
+		result = g.Board.shootAt(row, col, nil)
 	}
 
-	util.LogInfo("Bot player shot at %s", RowColToS(row, col))
+	g.notifyViewsAfterShot(row, col, result)
+
+	util.LogInfo("Bot player shot at %s and the result is: %s", RowColToS(row, col), result)
 }
 
-func measureTurnTime(endTurn chan int) {
+func (g *Game) measureTurnTime() {
 	elapsed := 0.0
 	start := time.Now()
 	ticker := time.NewTicker(time.Second)
@@ -209,12 +243,25 @@ func measureTurnTime(endTurn chan int) {
 		case now := <-ticker.C:
 			elapsed = now.Sub(start).Seconds()
 			util.LogDebug("Tick: %f", elapsed)
+
+			// report tick
+			for _, reporter := range g.views {
+				reporter.ReportElapsedTime(elapsed)
+			}
+
 			if elapsed >= float64(conf.TurnDurationSec) {
 				ticker.Stop()
-				endTurn <- 1
+				g.endTurn <- 1
 			}
-		case <-endTurn:
+		case <-g.endTurn:
 			return
 		}
+	}
+}
+
+// notfiy the the views after a shot has been fired
+func (g *Game) notifyViewsAfterShot(row, col int, result HitResult) {
+	for _, reporter := range g.views {
+		reporter.ReportHitResult(row, col, result)
 	}
 }
