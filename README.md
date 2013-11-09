@@ -38,18 +38,18 @@ töltsd le a forráskódot `go get` segítségével.
     $ go get github.com/kir-dev/torpedo
 
 Vagy állítsd be a `$GOPATH` változót és klónozd a repót, ahogy mindig is
-szoktad. Utána futass `go build`-et.
+szoktad. Utána futtass `go build`-et.
 
-Szerkeszőtnek én a Sublime Text 2/3 + GoSublime kombót ajánlom.
+Szerkesztőnek én a Sublime Text 2/3 + GoSublime kombót ajánlom.
 
-Testek futtatás
+Tesztek futtatás
 ---------------
 
 A teszteket a következő paranccsal futtathatjuk:
 
     $ ENV=test go test
 
-A környzeti változó beállítása szükséges, mert egyelőre még vannak olyan
+A környezeti változó beállítása szükséges, mert egyelőre még vannak olyan
 kódrészek, amik teszt környezetben nem futnak le. Ezek főleg a `channel`-ek
 környékén fordulnak elő. Tervben van, hogy refaktorálunk és egy szebb megoldást
 használunk helyettük.
@@ -57,7 +57,7 @@ használunk helyettük.
 Futtatás
 --------
 
-Futtasunk egy `go build`-et, hogy legyen binárisunk. Utána már tudjuk futtatni:
+Futtassunk egy `go build`-et, hogy legyen binárisunk. Utána már tudjuk futtatni:
 
     $ ./torpedo [-config /path/to/config.json] [-port :8080]
 
