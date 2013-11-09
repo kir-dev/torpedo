@@ -1,6 +1,7 @@
-package main
+package engine
 
 import (
+	"github.com/kir-dev/torpedo/util"
 	"math/rand"
 	"sync"
 	"time"
@@ -19,11 +20,28 @@ type Game struct {
 	isStarted       bool
 }
 
+// Creates a new game with a channel on which it will signal when the game ends.
+func NewGame(end chan<- int) *Game {
+	g := newGame()
+	g.EndCh = end
+
+	return g
+}
+
+// Starts the game.
+func (g *Game) Start() {
+	go g.step()
+}
+
+func (g *Game) Shoot(row, col int) HitResult {
+	return g.Board.shootAt(row, col, g.endTurn)
+}
+
 // Creates a new game, but does not start it.
 func newGame() *Game {
 	id := generateId()
 
-	logInfo("Creating a new game with id: %s.", id)
+	util.LogInfo("Creating a new game with id: %s.", id)
 	game := Game{}
 
 	game.Id = id
@@ -43,19 +61,12 @@ func newGame() *Game {
 	return &game
 }
 
-func newGameWithEndChannel(end chan<- int) *Game {
-	g := newGame()
-	g.EndCh = end
-
-	return g
-}
-
 func (g *Game) addPlayer(player *Player) {
 	g.mu.Lock()
 	g.Players = append(g.Players, player)
 	g.mu.Unlock()
 
-	if !isTest() && !g.isStarted {
+	if !util.IsTest() && !g.isStarted {
 		g.playerJoinedCh <- len(g.Players)
 	}
 }
@@ -69,11 +80,6 @@ func (game *Game) hasAlreadyJoined(player *Player) bool {
 		}
 	}
 	return false
-}
-
-// Starts the game.
-func (g *Game) start() {
-	go g.step()
 }
 
 // Returns true if all players are bots in the game.
@@ -105,7 +111,7 @@ func (g *Game) step() {
 		// when we do, break the main loop
 		if result, winner := g.hasWinner(); result {
 			g.Winner = winner
-			logInfo("The winner is: %s", winner.Name)
+			util.LogInfo("The winner is: %s", winner.Name)
 			// TODO: handle winner
 			break
 		}
@@ -113,7 +119,7 @@ func (g *Game) step() {
 		prevPlayerId := g.CurrentPlayerId
 		player, err := g.getNextPlayer(prevPlayerId)
 		if err != nil {
-			logError("No player found for id %v", prevPlayerId)
+			util.LogError("No player found for id %v", prevPlayerId)
 			continue
 		}
 
@@ -126,7 +132,7 @@ func (g *Game) step() {
 
 // Starts a new turn for a player. Block while the player's turn ends.
 func (g *Game) doTurn(player *Player) {
-	logInfo("%s started her turn.", player.Name)
+	util.LogInfo("%s started her turn.", player.Name)
 
 	// set current player
 	g.CurrentPlayerId = player.Id
@@ -144,7 +150,7 @@ func (g *Game) doTurn(player *Player) {
 
 		<-g.endTurn
 	}
-	logInfo("%s finished her turn.", player.Name)
+	util.LogInfo("%s finished her turn.", player.Name)
 }
 
 // Gets the next player in the game. Order based on first came first serve.
@@ -160,7 +166,7 @@ func (g *Game) getNextPlayer(playerId string) (*Player, error) {
 		}
 	}
 
-	return nil, errorf("No such player: %s", playerId)
+	return nil, util.Errorf("No such player: %s", playerId)
 }
 
 // Returns true only if there is only one player left on the board. False
@@ -191,7 +197,7 @@ func (g *Game) shootForAI() {
 		row, col = rand.Intn(SIZE), rand.Intn(SIZE)
 	}
 
-	logInfo("Bot player shot at %s", rcToS(row, col))
+	util.LogInfo("Bot player shot at %s", RowColToS(row, col))
 }
 
 func measureTurnTime(endTurn chan int) {
@@ -202,7 +208,7 @@ func measureTurnTime(endTurn chan int) {
 		select {
 		case now := <-ticker.C:
 			elapsed = now.Sub(start).Seconds()
-			logDebug("Tick: %f", elapsed)
+			util.LogDebug("Tick: %f", elapsed)
 			if elapsed >= float64(conf.TurnDurationSec) {
 				ticker.Stop()
 				endTurn <- 1

@@ -1,4 +1,4 @@
-package main
+package engine
 
 // Represents a field on the board.
 type Field struct {

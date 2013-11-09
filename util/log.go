@@ -1,4 +1,4 @@
-package main
+package util
 
 import (
 	"bytes"
@@ -13,9 +13,9 @@ const (
 	FATAL = "FATAL"
 )
 
-func logDebug(format string, args ...interface{}) {
+func LogDebug(format string, args ...interface{}) {
 	// debug messages only printed in dev mode
-	if !isDev() {
+	if !IsDev() {
 		return
 	}
 
@@ -23,22 +23,22 @@ func logDebug(format string, args ...interface{}) {
 }
 
 // logs a message with info prefix
-func logInfo(format string, args ...interface{}) {
+func LogInfo(format string, args ...interface{}) {
 	logMessage(INFO, format, args...)
 }
 
 // logs a message with warn prefix
-func logWarn(format string, args ...interface{}) {
+func LogWarn(format string, args ...interface{}) {
 	logMessage(WARN, format, args...)
 }
 
 // logs a message with error prefix
-func logError(format string, args ...interface{}) {
+func LogError(format string, args ...interface{}) {
 	logMessage(ERROR, format, args...)
 }
 
 // logs a message with fatal prefix and exists
-func logFatal(format string, args ...interface{}) {
+func LogFatal(format string, args ...interface{}) {
 	log.Fatalf(prepareLogMessage(FATAL, format), args)
 }
 

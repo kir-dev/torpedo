@@ -1,8 +1,9 @@
-package main
+package engine
 
 import (
 	"errors"
 	"fmt"
+	"github.com/kir-dev/torpedo/util"
 	"math"
 	"math/rand"
 	"strconv"
@@ -19,13 +20,13 @@ const (
 )
 
 const (
-	HIT      = hitResult("hit")
-	HIT_SUNK = hitResult("hit&sunk")
-	MISS     = hitResult("miss")
-	INVALID  = hitResult("invalid")
+	HIT      = HitResult("hit")
+	HIT_SUNK = HitResult("hit&sunk")
+	MISS     = HitResult("miss")
+	INVALID  = HitResult("invalid")
 )
 
-type hitResult string
+type HitResult string
 
 type direction int
 
@@ -55,13 +56,13 @@ func (board *Board) placeShips(allPlayers []*Player, player *Player) error {
 	}
 
 	avg := average(scores)
-	logInfo("average board score is %f", avg)
+	util.LogInfo("average board score is %f", avg)
 	if len(allPlayers) == 0 {
 		avg = BASE_SCORE
 	}
 
 	deployment := computeShipDeployment(avg)
-	logInfo("Deployment for %s player: %v", player.Name, deployment)
+	util.LogInfo("Deployment for %s player: %v", player.Name, deployment)
 	return board.deployShips(player, deployment)
 }
 
@@ -134,7 +135,7 @@ func (board *Board) chooseFields(size, row, col int) ([]*Field, error) {
 
 // Slice in a specific direction
 func (b *Board) fieldsInSlot(row, col, offset int, dir direction, slot gap) []*Field {
-	logDebug("Picking fields [%d, %d] in %s", slot.start+offset, slot.end+offset, dir.toString())
+	util.LogDebug("Picking fields [%d, %d] in %s", slot.start+offset, slot.end+offset, dir.toString())
 	if dir == ROW {
 		return b.Fields[row][slot.start+offset : slot.end+offset+1]
 	}
@@ -198,7 +199,7 @@ func computeShipDeployment(boardAverage float64) []int {
 }
 
 // Shoot at a coordinate on the game's board
-func (b *Board) shootAt(row, col int, endTurn chan<- int) hitResult {
+func (b *Board) shootAt(row, col int, endTurn chan<- int) HitResult {
 	field := b.Fields[row][col]
 
 	if field.IsHit {

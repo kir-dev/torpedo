@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/kir-dev/torpedo/engine"
+	"github.com/kir-dev/torpedo/util"
 	"log"
 	"math/rand"
 	"net/http"
@@ -10,46 +12,38 @@ import (
 	"time"
 )
 
-const (
-	ENV  = "ENV"
-	DEV  = "development"
-	TEST = "test"
-)
-
 var (
-	currentGame *Game
-
-	configPath = flag.String("config", "", "Path of the config file. If left empty, default config will be loaded.")
-	port       = flag.String("port", ":8080", "Port to bind to.")
-	conf       = defaultConfig()
+	currentGame *engine.Game
+	port        = flag.String("port", ":8080", "Port to bind to.")
 )
 
 func main() {
-	rand.Seed(time.Now().Unix())
-	log.SetOutput(os.Stdout)
-
-	flag.Parse()
 
 	fmt.Printf("Starting on port %s...\n", *port)
-	if isDev() {
+	if util.IsDev() {
 		fmt.Println("Started in DEVELOPMENT mode.")
 	}
 	fmt.Println("Press Ctrl-C to exit!")
 	fmt.Println()
-
-	// load config
-	if *configPath != "" {
-		conf = loadConfig(*configPath)
-	}
-
-	logInfo("Loaded config: %#v", conf)
 
 	// start main loop for the application
 	go mainLoop()
 
 	http.Handle("/public/", http.FileServer(http.Dir(".")))
 	log.Fatal(http.ListenAndServe(*port, nil))
+}
 
+func initialize() {
+	// seed with current time.
+	rand.Seed(time.Now().Unix())
+	// log to stdout instead of stderr
+	log.SetOutput(os.Stdout)
+
+	// load config
+	var configPath string
+	flag.StringVar(&configPath, "config", "", "Path of the config file. If left empty, default config will be loaded.")
+	flag.Parse()
+	engine.LoadConfig(configPath)
 }
 
 // main loop for the program, starts new game when needed
@@ -57,18 +51,10 @@ func mainLoop() {
 	endGame := make(chan int)
 
 	for {
-		currentGame = newGameWithEndChannel(endGame)
-		currentGame.start()
+		currentGame = engine.NewGame(endGame)
+		currentGame.Start()
 
 		<-endGame
 		// TODO: archive game before creating a new one
 	}
-}
-
-func isDev() bool {
-	return os.Getenv(ENV) == "" || os.Getenv(ENV) == DEV
-}
-
-func isTest() bool {
-	return os.Getenv(ENV) == TEST
 }

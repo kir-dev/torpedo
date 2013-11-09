@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ func TestAddingPlayerToGame(t *testing.T) {
 	g := newGame()
 	playerCount := len(g.Players)
 
-	g.addPlayer(newPlayer("Teszt Elek"))
+	g.addPlayer(NewPlayer("Teszt Elek"))
 
 	if playerCount >= len(g.Players) {
 		t.Error("Player was not added to the game")
@@ -30,13 +30,13 @@ func TestInitBoardOnStart(t *testing.T) {
 func TestGetNextPlayer(t *testing.T) {
 	g := newGame()
 
-	player1 := newPlayer("t1")
-	player2 := newPlayer("t2")
-	player3 := newPlayer("t3")
+	player1 := NewPlayer("t1")
+	player2 := NewPlayer("t2")
+	player3 := NewPlayer("t3")
 
-	player1.join(g)
-	player2.join(g)
-	player3.join(g)
+	player1.Join(g)
+	player2.Join(g)
+	player3.Join(g)
 
 	p, _ := g.getNextPlayer(player2.Id)
 
@@ -58,11 +58,11 @@ func TestGetNextPlayerReturnsErrorWhenNoPlayerFound(t *testing.T) {
 func TestGetNextPlayerShouldReturnFirstPlayerIfCurrentIsTheLast(t *testing.T) {
 	g := newGame()
 
-	player1 := newPlayer("t1")
-	player2 := newPlayer("t2")
+	player1 := NewPlayer("t1")
+	player2 := NewPlayer("t2")
 
-	player1.join(g)
-	player2.join(g)
+	player1.Join(g)
+	player2.Join(g)
 
 	p, _ := g.getNextPlayer(player2.Id)
 
@@ -74,11 +74,11 @@ func TestGetNextPlayerShouldReturnFirstPlayerIfCurrentIsTheLast(t *testing.T) {
 func TestIsAllBotWithOneHumanPlayer(t *testing.T) {
 	g := newGame()
 
-	p := newPlayer("t1")
+	p := NewPlayer("t1")
 	p.IsBot = true
-	p.join(g)
+	p.Join(g)
 
-	newPlayer("t2").join(g)
+	NewPlayer("t2").Join(g)
 
 	if g.isAllBot() == true {
 		t.Errorf("There is one human player, should've returned false.")
@@ -88,13 +88,13 @@ func TestIsAllBotWithOneHumanPlayer(t *testing.T) {
 func TestIsAllBot(t *testing.T) {
 	g := newGame()
 
-	p := newPlayer("t1")
+	p := NewPlayer("t1")
 	p.IsBot = true
-	p.join(g)
+	p.Join(g)
 
-	p = newPlayer("t2")
+	p = NewPlayer("t2")
 	p.IsBot = true
-	p.join(g)
+	p.Join(g)
 
 	if g.isAllBot() == false {
 		t.Errorf("There is no human player, should've returned true.")
@@ -103,9 +103,9 @@ func TestIsAllBot(t *testing.T) {
 
 func TestHasWinner(t *testing.T) {
 	g := newGame()
-	p1 := newPlayer("t1")
+	p1 := NewPlayer("t1")
 	p1.Ships = append(p1.Ships, newShip(2))
-	p2 := newPlayer("t2")
+	p2 := NewPlayer("t2")
 
 	g.Players = append(g.Players, p1, p2)
 

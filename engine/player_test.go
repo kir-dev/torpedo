@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"io/ioutil"
@@ -12,7 +12,7 @@ func init() {
 
 func TestPlayerJoins(t *testing.T) {
 	game := newGame()
-	newPlayer("test").join(game)
+	NewPlayer("test").Join(game)
 
 	if len(game.Players) < 1 {
 		t.Error("Player could not join the game.")
@@ -21,10 +21,10 @@ func TestPlayerJoins(t *testing.T) {
 
 func TestPlayerCannotJoinTwice(t *testing.T) {
 	game := newGame()
-	player := newPlayer("test")
+	player := NewPlayer("test")
 
-	player.join(game)
-	player.join(game)
+	player.Join(game)
+	player.Join(game)
 
 	if len(game.Players) > 1 {
 		t.Error("Player joined twice.")
@@ -34,8 +34,8 @@ func TestPlayerCannotJoinTwice(t *testing.T) {
 func TestPlayerHasAlredyJoined(t *testing.T) {
 	game := newGame()
 
-	player := newPlayer("test")
-	player.join(game)
+	player := NewPlayer("test")
+	player.Join(game)
 
 	if !game.hasAlreadyJoined(player) {
 		t.Error("Player should have been marked as joined.")
@@ -45,8 +45,8 @@ func TestPlayerHasAlredyJoined(t *testing.T) {
 func TestPlayerHasAlreadyJoinedIsIndependentFromThePlayerObject(t *testing.T) {
 	game := newGame()
 
-	newPlayer("test").join(game)
-	player := newPlayer("test")
+	NewPlayer("test").Join(game)
+	player := NewPlayer("test")
 
 	if !game.hasAlreadyJoined(player) {
 		t.Error("Player should have been marked as joined.")
@@ -54,14 +54,14 @@ func TestPlayerHasAlreadyJoinedIsIndependentFromThePlayerObject(t *testing.T) {
 }
 
 func TestGetTheNumberOfWorkingShips(t *testing.T) {
-	p := newPlayer("t1")
+	p := NewPlayer("t1")
 	if n := len(p.getWorkingShips()); n != 0 {
 		t.Errorf("Expected 0 but got %d", n)
 	}
 }
 
 func TestGetWorkingShips(t *testing.T) {
-	p := newPlayer("t1")
+	p := NewPlayer("t1")
 	p.Ships = append(p.Ships, newShip(2))
 
 	if n := len(p.getWorkingShips()); n != 1 {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"github.com/kir-dev/torpedo/util"
 	"html/template"
 )
 
@@ -20,7 +21,7 @@ func letters(count int, tag string) template.HTML {
 	t, err := template.New("partail").Parse("<" + tag + ">{{.}}</" + tag + ">")
 
 	if err != nil {
-		logError(err.Error())
+		util.LogError(err.Error())
 		return ""
 	}
 

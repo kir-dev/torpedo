@@ -1,4 +1,8 @@
-package main
+package engine
+
+import (
+	"github.com/kir-dev/torpedo/util"
+)
 
 type Player struct {
 	Name  string
@@ -8,16 +12,16 @@ type Player struct {
 }
 
 // creates a new player
-func newPlayer(name string) *Player {
+func NewPlayer(name string) *Player {
 	// TODO check for ID uniqueness
 	return &Player{name, false, nil, generateId()}
 }
 
 // Adds a player to the registry.
-func (player *Player) join(game *Game) error {
-	logInfo("New player (with name: %s) attempts to join the game.", player.Name)
+func (player *Player) Join(game *Game) error {
+	util.LogInfo("New player (with name: %s) attempts to join the game.", player.Name)
 	if game.hasAlreadyJoined(player) {
-		return errorf("Player with name %s has already joined the game.", player.Name)
+		return util.Errorf("Player with name %s has already joined the game.", player.Name)
 	}
 
 	err := game.Board.placeShips(game.Players, player)
@@ -27,7 +31,7 @@ func (player *Player) join(game *Game) error {
 
 	game.addPlayer(player)
 
-	logInfo("Player with name %s has joined the game.", player.Name)
+	util.LogInfo("Player with name %s has joined the game.", player.Name)
 	return nil
 }
 

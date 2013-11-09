@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/kir-dev/torpedo/engine"
+	"github.com/kir-dev/torpedo/util"
 	"html/template"
 	"log"
 	"net/http"
@@ -82,22 +84,22 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	if !canJoin {
-		renderError(rw, errorf("You are already playing! You cannot join twice."))
+		renderError(rw, util.Errorf("You are already playing! You cannot join twice."))
 		return
 	}
 
 	if req.Method == "POST" {
-		player := newPlayer(req.FormValue("username"))
+		player := engine.NewPlayer(req.FormValue("username"))
 		player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
 
-		err := player.join(currentGame)
+		err := player.Join(currentGame)
 		if err != nil {
-			logWarn("Player could not join. Cause: %s", err.Error())
+			util.LogWarn("Player could not join. Cause: %s", err.Error())
 			renderTemplate(rw, ERROR_TEMPLATE, errorView{
 				// TODO: move to properties file
 				"Játékos nem tudott csatlakozni.",
 				err.Error(),
-				isDev(),
+				util.IsDev(),
 			})
 		} else {
 			http.SetCookie(rw, &http.Cookie{Name: PLAYER_ID_COOKIE, Value: player.Id, HttpOnly: true})
@@ -126,7 +128,7 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var feedback hitResult
+	var feedback engine.HitResult
 	if r.Method == "POST" {
 		// check if the player is up
 		if currentGame.CurrentPlayerId != cookie.Value {
@@ -150,8 +152,8 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		col := int(colS[0] - 'A')
 
-		logInfo("Player shot at (%s)", rcToS(row, col))
-		feedback = currentGame.Board.shootAt(row, col, currentGame.endTurn)
+		util.LogInfo("Player shot at (%s)", engine.RowColToS(row, col))
+		feedback = currentGame.Shoot(row, col)
 	}
 
 	renderTemplate(w, SHOOT_TEMPLATE, feedback)
@@ -186,7 +188,7 @@ func renderParseError(w http.ResponseWriter, err error) bool {
 		renderTemplate(w, ERROR_TEMPLATE, errorView{
 			"Could not parse integer",
 			err.Error(),
-			isDev(),
+			util.IsDev(),
 		})
 		return true
 	}
@@ -198,7 +200,7 @@ func renderError(w http.ResponseWriter, err error) {
 	renderTemplate(w, ERROR_TEMPLATE, errorView{
 		err.Error(),
 		err.Error(),
-		isDev(),
+		util.IsDev(),
 	})
 }
 
@@ -228,7 +230,7 @@ func getFullTempalteName(tmplName string) string {
 // it re-reads the template from the file every time. Otherwise it uses the
 // cached version.
 func renderTemplate(w http.ResponseWriter, tmplName string, data interface{}) {
-	if isDev() {
+	if util.IsDev() {
 		tmpl := template.New(getFullTempalteName(tmplName))
 		tmpl.Funcs(utilFuncMap())
 		//tmpl, err := template.ParseFiles("template/" + getFullTempalteName(tmplName))
@@ -255,4 +257,10 @@ func covertCheckboxValueToBool(value string) bool {
 // creates the message for 404
 func messageFor404(req *http.Request) string {
 	return fmt.Sprintf("(404) Not found: [%s] %s", req.Method, req.RequestURI)
+}
+
+type errorView struct {
+	Title   string
+	Message string
+	IsDev   bool
 }

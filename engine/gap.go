@@ -1,4 +1,4 @@
-package main
+package engine
 
 type gap struct {
 	start int

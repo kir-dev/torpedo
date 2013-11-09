@@ -1,16 +1,9 @@
-package main
+package engine
 
 import (
 	"crypto/rand"
-	"errors"
 	"fmt"
 )
-
-type errorView struct {
-	Title   string
-	Message string
-	IsDev   bool
-}
 
 func average(numbers []float64) float64 {
 	if len(numbers) == 0 {
@@ -79,10 +72,6 @@ func minInt(x, y int) int {
 	return y
 }
 
-func errorf(format string, vars ...interface{}) error {
-	return errors.New(fmt.Sprintf(format, vars...))
-}
-
 func generateId() string {
 	id := make([]byte, 20)
 	rand.Read(id)
@@ -90,6 +79,6 @@ func generateId() string {
 }
 
 // Row-column to string
-func rcToS(row, col int) string {
+func RowColToS(row, col int) string {
 	return fmt.Sprintf("(%s, %d)", string(col+65), row+1)
 }

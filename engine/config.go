@@ -1,13 +1,18 @@
-package main
+package engine
 
 import (
 	"encoding/json"
+	"github.com/kir-dev/torpedo/util"
 	"os"
 )
 
 const (
 	TURN_DURATION_SEC = 30
 	BOT_TURN_DURATION = 5
+)
+
+var (
+	conf config
 )
 
 type config struct {
@@ -22,7 +27,11 @@ type config struct {
 	WaitForBots bool `json:"wait_for_bots"`
 }
 
-func loadConfig(path string) config {
+func LoadConfig(path string) config {
+	if path == "" {
+		return defaultConfig()
+	}
+
 	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
@@ -51,6 +60,8 @@ func loadConfigFromBytes(rawContent []byte) config {
 	if err != nil {
 		panic(err)
 	}
+
+	util.LogDebug("Loaded config: %#v", conf)
 
 	return conf
 }
