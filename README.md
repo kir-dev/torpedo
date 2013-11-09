@@ -51,6 +51,13 @@ A teszteket a következő paranccsal futtathatjuk:
 
 Ez egymás után lefuttatja az `engine`, `util` és a `main` package tesztjeit.
 
+Egy éles lefutást szimulálhatunk 2 gépi játékossal:
+
+    $ scripts/test-ai.sh
+
+A fután után az eredmény a `test.log` fájlban látható. Ennek az utolsó 20 sorát
+az kiemenetre ki kiírja a script.
+
 Futtatás
 --------
 

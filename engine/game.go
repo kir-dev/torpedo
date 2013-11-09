@@ -157,6 +157,7 @@ func (g *Game) step() {
 		reporter.ReportGameOver(g.Winner)
 	}
 	g.endCh <- 1 // signal the main loop
+	g.cleanUp()
 }
 
 // Starts a new turn for a player. Block while the player's turn ends.
@@ -264,4 +265,13 @@ func (g *Game) notifyViewsAfterShot(row, col int, result HitResult) {
 	for _, reporter := range g.views {
 		reporter.ReportHitResult(row, col, result)
 	}
+}
+
+func (g *Game) cleanUp() {
+	// release views
+	g.views = nil
+
+	// close channels
+	close(g.playerJoinedCh)
+	// NOTE: g.endTurn was closed at the end of the last turn
 }
