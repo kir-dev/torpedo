@@ -15,9 +15,12 @@ const (
 	MSG_ELAPSEDTIME
 )
 
+const MAX_VIEW_ERROR_COUNT = 3
+
 type viewReporter struct {
 	conn       *websocket.Conn
 	remoteAddr string
+	errorCount int
 }
 
 type viewMsg struct {
@@ -32,20 +35,33 @@ func (v *viewReporter) ReportHitResult(row, col int, result engine.HitResult) {
 		"result": result,
 	}
 
-	if err := v.conn.WriteJSON(viewMsg{MSG_HITRESULT, values}); err != nil {
-		// TODO: discard view after n errors
-		util.LogError("Could not send data to %s.", v.remoteAddr)
-	}
+	v.send(MSG_HITRESULT, values)
 }
 
 func (v *viewReporter) ReportGameStarted() {
-
+	v.send(MSG_GAMESTARTED, nil)
 }
 
 func (v *viewReporter) ReportGameOver(winner *engine.Player) {
-
+	v.send(MSG_GAMEOVER, winner.Name)
 }
 
 func (v *viewReporter) ReportElapsedTime(elapsed float64) {
+	v.send(MSG_ELAPSEDTIME, elapsed)
+}
 
+func (v *viewReporter) send(aType messageType, payload interface{}) {
+	// try to write in the socket
+	err := v.conn.WriteJSON(viewMsg{aType, payload})
+
+	if err != nil {
+		if v.errorCount >= MAX_VIEW_ERROR_COUNT {
+			currentGame.DiscardView(v)
+			util.LogWarn("Discarded view for %s after %d errors", v.remoteAddr, v.errorCount)
+			return
+		}
+
+		util.LogWarn("Could not send data to %s. Error msg: %s", v.remoteAddr, err)
+		v.errorCount += 1
+	}
 }

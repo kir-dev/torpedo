@@ -23,9 +23,19 @@ $(function () {
         ws.onmessage = function (event) {
             var o = JSON.parse(event.data)
 
+            // giant switch-case to process message from server
             switch (o.type) {
                 case MSG_HITRESULT:
-                    shotReceived(o.payload);
+                    shot(o.payload);
+                    break;
+                case MSG_ELAPSEDTIME:
+                    time(o.payload);
+                    break;
+                case MSG_GAMESTARTED:
+                    gameStarted();
+                    break;
+                case MSG_GAMEOVER:
+                    gameEnded(o.payload);
                     break;
                 default:
                     console.log(o);
@@ -35,7 +45,23 @@ $(function () {
         return ws;
     }
 
-    function shotReceived(payload) {
+    function shot(payload) {
         $(".coord-" + payload.row + "-" + payload.col).addClass(payload.result);
     }
+
+    function time(elapsed) {
+        // TODO: get value from the server
+        var remaining = 30 - Math.floor(elapsed);
+        $("#elapsed-time").html(remaining);
+    }
+
+    function gameStarted() {
+        console.log("Game started");
+        // TODO: reset view
+    }
+
+    function gameEnded(winner) {
+        $(".winner span").html(winner).parent().show();
+    }
+
 });

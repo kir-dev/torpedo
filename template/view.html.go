@@ -15,7 +15,12 @@
         </div>
     {{end}}
 
-    <div class="error">
+    <div class="winner hidden">
+        A nyertes: <span>[name]</span>
+    </div>
+
+    <div id="time">
+        A körből hátralevő idő: <span id="elapsed-time">0</span> s
     </div>
 
     <table id="board">

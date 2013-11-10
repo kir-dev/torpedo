@@ -65,6 +65,23 @@ func (g *Game) RegisterView(reporter ViewReporter) {
 	g.views = append(g.views, reporter)
 }
 
+func (g *Game) DiscardView(view ViewReporter) {
+	g.viewMu.Lock()
+	defer g.viewMu.Unlock()
+
+	var index int
+
+	// find the view in question
+	for i, v := range g.views {
+		if v == view {
+			index = i
+		}
+	}
+
+	// delete it
+	g.views = append(g.views[:index], g.views[index+1:]...)
+}
+
 // Creates a new game, but does not start it.
 func newGame() *Game {
 	id := generateId()

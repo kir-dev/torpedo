@@ -118,3 +118,46 @@ func TestHasWinner(t *testing.T) {
 		t.Errorf("Expected winner: %s, got: %s", p1.Name, winner.Name)
 	}
 }
+
+/********* ViewReporter mock ******/
+
+type viewReporterMock struct{}
+
+func (viewReporterMock) ReportHitResult(row, col int, result HitResult) {
+}
+
+func (viewReporterMock) ReportGameStarted() {
+}
+
+func (viewReporterMock) ReportGameOver(winner *Player) {
+}
+
+func (viewReporterMock) ReportElapsedTime(elapsed float64) {
+}
+
+/****** End of ViewReporter mock **/
+
+func TestDiscardView(t *testing.T) {
+	g := newGame()
+
+	toRemove := viewReporterMock{}
+	g.RegisterView(toRemove)
+
+	for i := 0; i < 9; i++ {
+		vrm := viewReporterMock{}
+		g.RegisterView(vrm)
+	}
+
+	g.DiscardView(toRemove)
+
+	if len(g.views) > 9 {
+		t.Error("Should have discarded one view.")
+	}
+
+	for _, v := range g.views {
+		if v == &toRemove {
+			t.Fatal("Found view among game views, but it should have been discarded.")
+		}
+	}
+
+}

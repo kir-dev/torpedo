@@ -15,3 +15,12 @@ table#board td.hit, table#board td.hitnsunk {
 table#board td.miss {
     background-color: #ecb0cb;
 }
+
+div.winner {
+    font-size: 30px;
+    color: red;
+}
+
+.hidden {
+    display: none;
+}

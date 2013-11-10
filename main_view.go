@@ -29,5 +29,5 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	currentGame.RegisterView(&viewReporter{conn, r.RemoteAddr})
+	currentGame.RegisterView(&viewReporter{conn, r.RemoteAddr, 0})
 }
