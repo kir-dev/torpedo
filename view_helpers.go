@@ -2,14 +2,16 @@ package main
 
 import (
 	"bytes"
+	"github.com/kir-dev/torpedo/engine"
 	"github.com/kir-dev/torpedo/util"
 	"html/template"
 )
 
 func utilFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"add":     add,
-		"letters": letters,
+		"add":        add,
+		"letters":    letters,
+		"ship_class": getShipCSSClass,
 	}
 }
 
@@ -36,4 +38,15 @@ func letters(count int, tag string) template.HTML {
 	}
 
 	return template.HTML(buffer.String())
+}
+
+func getShipCSSClass(field *engine.Field) string {
+	if field.IsHit {
+		if field.IsEmpty() {
+			return "miss"
+		}
+		return "hit"
+	}
+
+	return ""
 }

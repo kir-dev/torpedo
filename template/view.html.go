@@ -15,6 +15,9 @@
         </div>
     {{end}}
 
+    <div class="error">
+    </div>
+
     <table id="board">
         {{with .Board}}
             {{letters (len .Fields) "td"}}
@@ -22,8 +25,8 @@
             {{range $col, $ := .Fields}}
                 <tr>
                     <td>{{add $col 1}}</td>
-                    {{range .}}
-                        <td class="field {{if not .IsEmpty}}ship{{end}} {{if .IsHit}}hit{{end}}"></td>
+                    {{range $row, $ := .}}
+                        <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}"></td>
                     {{end}}
                 </tr>
             {{end}}

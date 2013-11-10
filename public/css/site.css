@@ -8,10 +8,10 @@ table#board td.ship {
     background-color: #818181;
 }
 
-table#board td.hit {
-    background-color: #ecb0cb;
+table#board td.hit, table#board td.hitnsunk {
+    background-color: #f36420;
 }
 
-table#board td.ship.hit {
-    background-color: #f36420;
+table#board td.miss {
+    background-color: #ecb0cb;
 }

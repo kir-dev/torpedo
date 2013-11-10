@@ -32,8 +32,10 @@ type Game struct {
 	endCh          chan<- int
 	playerJoinedCh chan int
 	endTurn        chan int
-	mu             sync.Mutex
 	isStarted      bool
+
+	mu     sync.Mutex
+	viewMu sync.Mutex
 }
 
 // Creates a new game with a channel on which it will signal when the game ends.
@@ -55,7 +57,11 @@ func (g *Game) Shoot(row, col int) HitResult {
 	return result
 }
 
+// registers a view for the game
 func (g *Game) RegisterView(reporter ViewReporter) {
+	g.viewMu.Lock()
+	defer g.viewMu.Unlock()
+
 	g.views = append(g.views, reporter)
 }
 
