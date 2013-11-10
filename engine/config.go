@@ -27,10 +27,11 @@ type config struct {
 	WaitForBots bool `json:"wait_for_bots"`
 }
 
-func LoadConfig(path string) config {
+func LoadConfig(path string) {
 	if path == "" {
 		util.LogDebug("Loaded default config.")
-		return defaultConfig()
+		conf = defaultConfig()
+		return
 	}
 
 	f, err := os.Open(path)
@@ -51,7 +52,7 @@ func LoadConfig(path string) config {
 		panic(err)
 	}
 
-	return loadConfigFromBytes(rawContent)
+	conf = loadConfigFromBytes(rawContent)
 }
 
 func loadConfigFromBytes(rawContent []byte) config {

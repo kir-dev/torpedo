@@ -63,24 +63,14 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 
 // join handler
 func joinHandler(rw http.ResponseWriter, req *http.Request) {
-	var canJoin bool
+	canJoin := true
 
 	gid, errGid := req.Cookie(GAME_ID_COOKIE)
 	_, errPid := req.Cookie(PLAYER_ID_COOKIE)
 
-	switch {
-	case errGid != nil:
-		// no game id cookie -> did not participate in any game before
-		canJoin = true
-	case gid.Value != currentGame.Id:
-		// game id is not the current game's id, so it can join again
-		canJoin = true
-	case gid.Value == currentGame.Id && errPid == nil:
-		// has the current game's id and the player id as well -> cannot join
+	// has the current game's id and the player id as well -> cannot join
+	if errGid == nil && gid.Value == currentGame.Id && errPid == nil {
 		canJoin = false
-	case errPid != nil:
-		// does not have a player id -> automatically qualifies for join
-		canJoin = true
 	}
 
 	if !canJoin {
