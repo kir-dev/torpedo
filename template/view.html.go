@@ -4,16 +4,17 @@
     <link rel="stylesheet" type="text/css" href="/public/css/site.css">
 </head>
 <body>
-    {{with .Players}}
-        <div class="players">
-            <p>Aktuális játékosok:</p>
-            <ul>
+    <div id="player-list">
+        <p>Aktuális játékosok:</p>
+        <ul>
+            {{with .Players}}
                 {{range .}}
-                <li>{{.Name}}</li>
+                    <li>{{.Name}}</li>
                 {{end}}
-            </ul>
-        </div>
-    {{end}}
+            {{end}}
+        </ul>
+    </div>
+
 
     <div class="winner hidden">
         A nyertes: <span>[name]</span>

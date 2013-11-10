@@ -14,6 +14,7 @@ const (
 	MSG_GAMEOVER
 	MSG_ELAPSEDTIME
 	MSG_TURNSTART
+	MSG_PLAYERJOINED
 )
 
 const MAX_VIEW_ERROR_COUNT = 3
@@ -49,6 +50,10 @@ func (v *viewReporter) ReportGameOver(winner *engine.Player) {
 
 func (v *viewReporter) ReportElapsedTime(elapsed float64) {
 	v.send(MSG_ELAPSEDTIME, elapsed)
+}
+
+func (v *viewReporter) ReportPlayerJoined(player *engine.Player) {
+	v.send(MSG_PLAYERJOINED, player.Name)
 }
 
 func (v *viewReporter) ReportPlayerTurnStart(current *engine.Player, next *engine.Player) {

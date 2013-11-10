@@ -21,6 +21,8 @@ type ViewReporter interface {
 	ReportElapsedTime(elapsed float64)
 	// Called when a new turn starts. Reports the current and the next player.
 	ReportPlayerTurnStart(current *Player, next *Player)
+	// Called when a new player joins the game.
+	ReportPlayerJoined(player *Player)
 }
 
 type Game struct {
@@ -115,6 +117,10 @@ func (g *Game) addPlayer(player *Player) {
 
 	if !util.IsTest() && !g.isStarted {
 		g.playerJoinedCh <- len(g.Players)
+	}
+
+	for _, view := range g.views {
+		view.ReportPlayerJoined(player)
 	}
 }
 

@@ -138,6 +138,9 @@ func (viewReporterMock) ReportElapsedTime(elapsed float64) {
 func (viewReporterMock) ReportPlayerTurnStart(current *Player, next *Player) {
 }
 
+func (viewReporterMock) ReportPlayerJoined(player *Player) {
+}
+
 /****** End of ViewReporter mock **/
 
 func TestDiscardView(t *testing.T) {
