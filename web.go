@@ -3,44 +3,54 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/kir-dev/torpedo/engine"
 	"github.com/kir-dev/torpedo/util"
 	"html/template"
-	"log"
 	"net/http"
 	"strconv"
 )
 
 const (
-	WELCOME_TEMPLATE = "welcome"
-	VIEW_TEMPLATE    = "view"
-	ERROR_TEMPLATE   = "error"
-	SHOOT_TEMPLATE   = "shoot"
-	PLAYER_ID_COOKIE = "id"
-	GAME_ID_COOKIE   = "gid"
+	WELCOME_TEMPLATE     = "welcome"
+	VIEW_TEMPLATE        = "view"
+	ERROR_TEMPLATE       = "error"
+	SHOOT_TEMPLATE       = "shoot"
+	HISTORYLIST_TEMPLATE = "history"
+	PLAYER_ID_COOKIE     = "id"
+	GAME_ID_COOKIE       = "gid"
 )
 
 var (
 	// registered routes, with handlers
-	routesMap = map[string]http.HandlerFunc{
-		"/":      rootHandler,
-		"/join":  joinHandler,
-		"/view":  viewHandler,
-		"/shoot": shootHandler,
-		"/quit":  quitHandler,
+	getRoutesMap = map[string]http.HandlerFunc{
+		"/":            rootHandler,
+		"/view":        viewHandler,
+		"/shoot":       shootHandler,
+		"/quit":        quitHandler,
+		"/games":       historyHandler,
+		"/games/{gid}": historyHandler,
 	}
+	postRoutesMap = map[string]http.HandlerFunc{
+		"/join":  joinHandler,
+		"/shoot": shootHandler,
+	}
+
 	// template cache
 	templates = template.New("root")
-	// to avoid initialization loop compilation error...
-	routes = make([]string, 0, 5)
 )
 
 // register handlers for routes
 func init() {
-	for route, handler := range routesMap {
-		http.HandleFunc(route, handler)
-		routes = append(routes, route)
+
+	r := mux.NewRouter()
+	for path, handler := range getRoutesMap {
+		r.HandleFunc(path, handler).Methods("GET")
 	}
+	for path, handler := range postRoutesMap {
+		r.HandleFunc(path, handler).Methods("POST")
+	}
+	http.Handle("/", r)
 
 	templates.Funcs(utilFuncMap())
 	templates = template.Must(templates.ParseGlob("template/*.html.go"))
@@ -51,12 +61,6 @@ func init() {
 // welcome page with registration
 // also every not registered routes will throw a 404
 func rootHandler(w http.ResponseWriter, req *http.Request) {
-	err := check404(w, req)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-
 	http.SetCookie(w, &http.Cookie{Name: GAME_ID_COOKIE, Value: currentGame.Id, HttpOnly: true})
 	renderTemplate(w, WELCOME_TEMPLATE, nil)
 }
@@ -78,27 +82,21 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if req.Method == "POST" {
-		player := engine.NewPlayer(req.FormValue("username"))
-		player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
+	player := engine.NewPlayer(req.FormValue("username"))
+	player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
 
-		err := player.Join(currentGame)
-		if err != nil {
-			util.LogWarn("Player could not join. Cause: %s", err.Error())
-			renderTemplate(rw, ERROR_TEMPLATE, errorView{
-				// TODO: move to properties file
-				"Játékos nem tudott csatlakozni.",
-				err.Error(),
-				util.IsDev(),
-			})
-		} else {
-			http.SetCookie(rw, &http.Cookie{Name: PLAYER_ID_COOKIE, Value: player.Id, HttpOnly: true})
-			http.Redirect(rw, req, "/view", http.StatusFound)
-		}
-
+	err := player.Join(currentGame)
+	if err != nil {
+		util.LogWarn("Player could not join. Cause: %s", err.Error())
+		renderTemplate(rw, ERROR_TEMPLATE, errorView{
+			// TODO: move to properties file
+			"Játékos nem tudott csatlakozni.",
+			err.Error(),
+			util.IsDev(),
+		})
 	} else {
-		http.NotFound(rw, req)
-		log.Print(messageFor404(req))
+		http.SetCookie(rw, &http.Cookie{Name: PLAYER_ID_COOKIE, Value: player.Id, HttpOnly: true})
+		http.Redirect(rw, req, "/view", http.StatusFound)
 	}
 }
 
@@ -149,6 +147,16 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 	renderTemplate(w, SHOOT_TEMPLATE, feedback)
 }
 
+func historyHandler(w http.ResponseWriter, r *http.Request) {
+	urlPattern := mux.Vars(r)
+	gid := urlPattern["gid"]
+	if gid != "" {
+		fmt.Fprintf(w, "History details")
+	} else {
+		renderTemplate(w, HISTORYLIST_TEMPLATE, Archive)
+	}
+}
+
 // Makes the player quit the game, sets the player to be a bot for the rest of
 // the game. There is no re-entry option.
 func quitHandler(w http.ResponseWriter, r *http.Request) {
@@ -192,23 +200,6 @@ func renderError(w http.ResponseWriter, err error) {
 		err.Error(),
 		util.IsDev(),
 	})
-}
-
-func check404(w http.ResponseWriter, req *http.Request) error {
-	found := false
-	for _, route := range routes {
-		if req.RequestURI == route {
-			found = true
-			break
-		}
-	}
-
-	if !found {
-		http.NotFound(w, req)
-		return errors.New(messageFor404(req))
-	}
-
-	return nil
 }
 
 // returns the template name that can be used for rendering

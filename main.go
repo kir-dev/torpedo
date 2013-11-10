@@ -13,8 +13,9 @@ import (
 )
 
 var (
-	currentGame *engine.Game
-	port        = flag.String("port", ":8080", "Port to bind to.")
+	currentGame *engine.Game   = nil
+	port                       = flag.String("port", ":8080", "Port to bind to.")
+	Archive     []*engine.Game = nil
 )
 
 func main() {
@@ -56,6 +57,7 @@ func mainLoop() {
 		currentGame.Start()
 
 		<-endGame
-		// TODO: archive game before creating a new one
+		Archive = append(Archive, currentGame)
+		util.LogInfo("Game ended with id: %s.", currentGame.Id)
 	}
 }
