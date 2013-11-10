@@ -135,6 +135,9 @@ func (viewReporterMock) ReportGameOver(winner *Player) {
 func (viewReporterMock) ReportElapsedTime(elapsed float64) {
 }
 
+func (viewReporterMock) ReportPlayerTurnStart(current *Player, next *Player) {
+}
+
 /****** End of ViewReporter mock **/
 
 func TestDiscardView(t *testing.T) {

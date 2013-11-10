@@ -23,6 +23,11 @@
         A körből hátralevő idő: <span id="elapsed-time">0</span> s
     </div>
 
+    <div id="players">
+        <p>Jelenlegi játékos: <span id="current-player"></span></p>
+        <p>Következő játékos: <span id="next-player"></span></p>
+    </div>
+
     <table id="board">
         {{with .Board}}
             {{letters (len .Fields) "td"}}

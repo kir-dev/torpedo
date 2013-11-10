@@ -19,6 +19,8 @@ type ViewReporter interface {
 	// Called on every second with the already elapsed seconds in the player's
 	// turn.
 	ReportElapsedTime(elapsed float64)
+	// Called when a new turn starts. Reports the current and the next player.
+	ReportPlayerTurnStart(current *Player, next *Player)
 }
 
 type Game struct {
@@ -153,6 +155,7 @@ func (g *Game) step() {
 	}
 
 	// we have enough players so start the first player's turn
+	g.reportTurnStart(g.Players[0], g.Players[1])
 	g.doTurn(g.Players[0])
 
 	// game event loop
@@ -171,6 +174,10 @@ func (g *Game) step() {
 			util.LogError("No player found for id %v", prevPlayerId)
 			continue
 		}
+
+		// report new turn for player
+		nextPlayer, _ := g.getNextPlayer(player.Id)
+		g.reportTurnStart(player, nextPlayer)
 
 		g.doTurn(player)
 	}
@@ -287,6 +294,12 @@ func (g *Game) measureTurnTime() {
 func (g *Game) notifyViewsAfterShot(row, col int, result HitResult) {
 	for _, reporter := range g.views {
 		reporter.ReportHitResult(row, col, result)
+	}
+}
+
+func (g *Game) reportTurnStart(current, next *Player) {
+	for _, view := range g.views {
+		view.ReportPlayerTurnStart(current, next)
 	}
 }
 

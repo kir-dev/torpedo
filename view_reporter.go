@@ -13,6 +13,7 @@ const (
 	MSG_GAMESTARTED
 	MSG_GAMEOVER
 	MSG_ELAPSEDTIME
+	MSG_TURNSTART
 )
 
 const MAX_VIEW_ERROR_COUNT = 3
@@ -48,6 +49,22 @@ func (v *viewReporter) ReportGameOver(winner *engine.Player) {
 
 func (v *viewReporter) ReportElapsedTime(elapsed float64) {
 	v.send(MSG_ELAPSEDTIME, elapsed)
+}
+
+func (v *viewReporter) ReportPlayerTurnStart(current *engine.Player, next *engine.Player) {
+	var nextPlayerName string
+	if next == nil {
+		nextPlayerName = "error: could not determine next player"
+	} else {
+		nextPlayerName = next.Name
+	}
+
+	names := map[string]string{
+		"current": current.Name,
+		"next":    nextPlayerName,
+	}
+
+	v.send(MSG_TURNSTART, names)
 }
 
 func (v *viewReporter) send(aType messageType, payload interface{}) {

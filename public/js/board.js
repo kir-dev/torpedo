@@ -1,7 +1,8 @@
 const MSG_HITRESULT = 0,
       MSG_GAMESTARTED = 1,
       MSG_GAMEOVER = 2,
-      MSG_ELAPSEDTIME = 3;
+      MSG_ELAPSEDTIME = 3,
+      MSG_TURNSTART = 4;
 
 $(function () {
 
@@ -37,6 +38,9 @@ $(function () {
                 case MSG_GAMEOVER:
                     gameEnded(o.payload);
                     break;
+                case MSG_TURNSTART:
+                    turn(o.payload);
+                    break;
                 default:
                     console.log(o);
             }
@@ -62,6 +66,11 @@ $(function () {
 
     function gameEnded(winner) {
         $(".winner span").html(winner).parent().show();
+    }
+
+    function turn(players) {
+        $("#current-player").html(players.current);
+        $("#next-player").html(players.next);
     }
 
 });
