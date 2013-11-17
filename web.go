@@ -108,6 +108,10 @@ func viewHandler(rw http.ResponseWriter, req *http.Request) {
 // shoot handler
 func shootHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(PLAYER_ID_COOKIE)
+	type ShootResult struct {
+		Feedback engine.HitResult
+		Game     *engine.Game
+	}
 
 	// the play might not be registered
 	if err != nil {
@@ -116,7 +120,9 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var feedback engine.HitResult
+	var shootResult ShootResult
+	shootResult.Game = currentGame
+
 	if r.Method == "POST" {
 		// check if the player is up
 		if currentGame.CurrentPlayerId != cookie.Value {
@@ -140,11 +146,11 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		col := int(colS[0] - 'A')
 
-		feedback = currentGame.Shoot(row, col)
-		util.LogInfo("Player shot at (%s) with result: %s", engine.RowColToS(row, col), feedback)
+		shootResult.Feedback = currentGame.Shoot(row, col)
+		util.LogInfo("Player shot at (%s) with result: %s", engine.RowColToS(row, col), shootResult.Feedback)
 	}
 
-	renderTemplate(w, SHOOT_TEMPLATE, feedback)
+	renderTemplate(w, SHOOT_TEMPLATE, shootResult)
 }
 
 func historyHandler(w http.ResponseWriter, r *http.Request) {
