@@ -21,7 +21,7 @@ const (
 
 const (
 	HIT      = HitResult("hit")
-	HIT_SUNK = HitResult("hit&sunk")
+	HIT_SUNK = HitResult("hitnsunk")
 	MISS     = HitResult("miss")
 	INVALID  = HitResult("invalid")
 )

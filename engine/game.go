@@ -19,6 +19,10 @@ type ViewReporter interface {
 	// Called on every second with the already elapsed seconds in the player's
 	// turn.
 	ReportElapsedTime(elapsed float64)
+	// Called when a new turn starts. Reports the current and the next player.
+	ReportPlayerTurnStart(current *Player, next *Player)
+	// Called when a new player joins the game.
+	ReportPlayerJoined(player *Player)
 }
 
 type Game struct {
@@ -32,8 +36,10 @@ type Game struct {
 	endCh          chan<- int
 	playerJoinedCh chan int
 	endTurn        chan int
-	mu             sync.Mutex
 	isStarted      bool
+
+	mu     sync.Mutex
+	viewMu sync.Mutex
 }
 
 // Creates a new game with a channel on which it will signal when the game ends.
@@ -55,8 +61,29 @@ func (g *Game) Shoot(row, col int) HitResult {
 	return result
 }
 
+// registers a view for the game
 func (g *Game) RegisterView(reporter ViewReporter) {
+	g.viewMu.Lock()
+	defer g.viewMu.Unlock()
+
 	g.views = append(g.views, reporter)
+}
+
+func (g *Game) DiscardView(view ViewReporter) {
+	g.viewMu.Lock()
+	defer g.viewMu.Unlock()
+
+	var index int
+
+	// find the view in question
+	for i, v := range g.views {
+		if v == view {
+			index = i
+		}
+	}
+
+	// delete it
+	g.views = append(g.views[:index], g.views[index+1:]...)
 }
 
 // Creates a new game, but does not start it.
@@ -90,6 +117,10 @@ func (g *Game) addPlayer(player *Player) {
 
 	if !util.IsTest() && !g.isStarted {
 		g.playerJoinedCh <- len(g.Players)
+	}
+
+	for _, view := range g.views {
+		view.ReportPlayerJoined(player)
 	}
 }
 
@@ -130,6 +161,7 @@ func (g *Game) step() {
 	}
 
 	// we have enough players so start the first player's turn
+	g.reportTurnStart(g.Players[0], g.Players[1])
 	g.doTurn(g.Players[0])
 
 	// game event loop
@@ -148,6 +180,10 @@ func (g *Game) step() {
 			util.LogError("No player found for id %v", prevPlayerId)
 			continue
 		}
+
+		// report new turn for player
+		nextPlayer, _ := g.getNextPlayer(player.Id)
+		g.reportTurnStart(player, nextPlayer)
 
 		g.doTurn(player)
 	}
@@ -264,6 +300,12 @@ func (g *Game) measureTurnTime() {
 func (g *Game) notifyViewsAfterShot(row, col int, result HitResult) {
 	for _, reporter := range g.views {
 		reporter.ReportHitResult(row, col, result)
+	}
+}
+
+func (g *Game) reportTurnStart(current, next *Player) {
+	for _, view := range g.views {
+		view.ReportPlayerTurnStart(current, next)
 	}
 }
 

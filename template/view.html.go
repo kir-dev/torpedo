@@ -7,16 +7,30 @@
     {{if hasWinner .Winner}}
         <a href="/games">Vissza az archívumhoz</a> <br/>
     {{end}}
-    {{with .Players}}
-        <div class="players">
-            <p>Játékosok:</p>
-            <ul>
+    <div id="player-list">
+        <p>Játékosok:</p>
+        <ul>
+            {{with .Players}}
                 {{range .}}
-                <li>{{.Name}}</li>
+                    <li>{{.Name}}</li>
                 {{end}}
-            </ul>
-        </div>
-    {{end}}
+            {{end}}
+        </ul>
+    </div>
+
+
+    <div class="winner hidden">
+        A nyertes: <span>[name]</span>
+    </div>
+
+    <div id="time">
+        A körből hátralevő idő: <span id="elapsed-time">0</span> s
+    </div>
+
+    <div id="players">
+        <p>Jelenlegi játékos: <span id="current-player"></span></p>
+        <p>Következő játékos: <span id="next-player"></span></p>
+    </div>
 
     <table id="board">
         {{with .Board}}
@@ -25,8 +39,8 @@
             {{range $col, $ := .Fields}}
                 <tr>
                     <td>{{add $col 1}}</td>
-                    {{range .}}
-                        <td class="field {{if not .IsEmpty}}ship{{end}} {{if .IsHit}}hit{{end}}"></td>
+                    {{range $row, $ := .}}
+                        <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}"></td>
                     {{end}}
                 </tr>
             {{end}}
