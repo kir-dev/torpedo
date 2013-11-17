@@ -15,7 +15,7 @@ import (
 var (
 	currentGame *engine.Game   = nil
 	port                       = flag.String("port", ":8080", "Port to bind to.")
-	Archive     []*engine.Game = nil
+	History     []*engine.Game = nil
 )
 
 func main() {
@@ -57,7 +57,7 @@ func mainLoop() {
 		currentGame.Start()
 
 		<-endGame
-		Archive = append(Archive, currentGame)
+		History = append(History, currentGame)
 		util.LogInfo("Game ended with id: %s.", currentGame.Id)
 	}
 }

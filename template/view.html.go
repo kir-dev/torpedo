@@ -4,9 +4,12 @@
     <link rel="stylesheet" type="text/css" href="/public/css/site.css">
 </head>
 <body>
+    {{if hasWinner .Winner}}
+        <a href="/games">Vissza az archívumhoz</a> <br/>
+    {{end}}
     {{with .Players}}
         <div class="players">
-            <p>Aktuális játékosok:</p>
+            <p>Játékosok:</p>
             <ul>
                 {{range .}}
                 <li>{{.Name}}</li>

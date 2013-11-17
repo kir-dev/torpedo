@@ -2,14 +2,33 @@ package main
 
 import (
 	"bytes"
+	"github.com/kir-dev/torpedo/engine"
 	"github.com/kir-dev/torpedo/util"
 	"html/template"
 )
 
 func utilFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"add":     add,
-		"letters": letters,
+		"add":            add,
+		"letters":        letters,
+		"hasWinner":      hasWinner,
+		"isHistoryEmpty": isHistoryEmpty,
+	}
+}
+
+func hasWinner(winner *engine.Player) bool {
+	if winner != nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+func isHistoryEmpty(history []*engine.Game) bool {
+	if len(history) == 0 {
+		return true
+	} else {
+		return false
 	}
 }
 

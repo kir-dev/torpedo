@@ -151,9 +151,16 @@ func historyHandler(w http.ResponseWriter, r *http.Request) {
 	urlPattern := mux.Vars(r)
 	gid := urlPattern["gid"]
 	if gid != "" {
-		fmt.Fprintf(w, "History details")
+		var selectedGame *engine.Game = nil
+		for _, game := range History {
+			if game.Id == gid {
+				selectedGame = game
+				break
+			}
+		}
+		renderTemplate(w, VIEW_TEMPLATE, selectedGame)
 	} else {
-		renderTemplate(w, HISTORYLIST_TEMPLATE, Archive)
+		renderTemplate(w, HISTORYLIST_TEMPLATE, History)
 	}
 }
 
