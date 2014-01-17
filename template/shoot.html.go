@@ -13,16 +13,8 @@
 </head>
 <body ng-controller="ShootCtrl">
 
-    <form action="/shoot" method="POST">
-        <input type="text" name="col" placeholder="A" size="1"/>
-        <input type="text" name="row" placeholder="1" size="1"/>
-        <input type="submit" value="Tüzel" />
-    </form>
-    {{with .Feedback}}
-        <p class="hit-result">
-            {{.}}
-        </p>
-    {{end}}
+    <input ng-model="shootResult" />
+    <input type="button" value="Jelenlegi állás" onclick="window.location.reload();" />
 
     {{with .Game}}
         <table id="board">
@@ -33,7 +25,7 @@
                     <tr>
                         <td>{{add $col 1}}</td>
                         {{range $row, $ := .}}
-                            <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}"></td>
+                            <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}" ng-click="shoot({{$col}},{{$row}})"></td>
                         {{end}}
                     </tr>
                 {{end}}
@@ -42,6 +34,7 @@
     {{end}}
 
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" src="/public/js/shoot.js"></script>
 </body>
 </html>

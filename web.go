@@ -126,8 +126,8 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		// check if the player is up
 		if currentGame.CurrentPlayerId != cookie.Value {
-			// TODO: error handling
-			fmt.Fprint(w, "It's not your turn!")
+			// -1 : it's not your turn
+			fmt.Fprint(w, "-1")
 			return
 		}
 
@@ -148,6 +148,8 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 
 		shootResult.Feedback = currentGame.Shoot(row, col)
 		util.LogInfo("Player shot at (%s) with result: %s", engine.RowColToS(row, col), shootResult.Feedback)
+		fmt.Fprint(w, shootResult.Feedback)
+		return
 	}
 
 	renderTemplate(w, SHOOT_TEMPLATE, shootResult)
