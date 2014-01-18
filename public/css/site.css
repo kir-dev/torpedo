@@ -1,7 +1,12 @@
+table#board.center-table {
+    margin: 0 auto !important;
+    float: none !important;
+}
+
 table#board td.field {
-    width: 20px;
-    height: 20px;
     border: 1px solid #000;
+    width: 3em;
+    height: 3em;
 }
 
 table#board td.ship {

@@ -9,15 +9,19 @@
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
 
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/public/css/site.css">
 </head>
-<body ng-controller="ShootCtrl">
+<body ng-controller="ShootCtrl" ng-init="init()">
 
-    <input ng-model="shootResult" />
-    <input type="button" value="Jelenlegi állás" onclick="window.location.reload();" />
+    <div class="row text-center">
+        <div class="span12"> 
+            <h1><span class="label label-info" ng-bind="shootResult"></span></h1>
+        </div>
+    </div>
 
     {{with .Game}}
-        <table id="board">
+        <table id="board" class="center-table">
             {{with .Board}}
                 {{letters (len .Fields) "td"}}
 
