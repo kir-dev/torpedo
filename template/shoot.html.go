@@ -29,7 +29,7 @@
                     <tr>
                         <td>{{add $col 1}}</td>
                         {{range $row, $ := .}}
-                            <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}" ng-click="shoot({{$col}},{{$row}})"></td>
+                            <td class="field coord-{{$col}}-{{$row}} {{ship_class .}} {{player_class .}}" ng-click="shoot({{$col}},{{$row}})"></td>
                         {{end}}
                     </tr>
                 {{end}}

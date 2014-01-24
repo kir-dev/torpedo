@@ -27,8 +27,9 @@ type ShipPart struct {
 
 // Creates a new ship with the specfied number of parts. Every part is empty,
 // needs further initialization.
-func newShip(numberOfParts int) *Ship {
+func newShip(numberOfParts int, p *Player) *Ship {
 	ship := Ship{}
+	ship.Player = p
 
 	ship.Parts = make([]*ShipPart, numberOfParts)
 	for i := 0; i < numberOfParts; i++ {

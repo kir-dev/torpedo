@@ -13,6 +13,7 @@ func utilFuncMap() template.FuncMap {
 		"letters":    letters,
 		"hasWinner":  hasWinner,
 		"ship_class": getShipCSSClass,
+		"player_class": getPlayerCSSClass,
 	}
 }
 
@@ -58,4 +59,13 @@ func getShipCSSClass(field *engine.Field) string {
 	}
 
 	return ""
+}
+
+func getPlayerCSSClass(field *engine.Field) string {
+	id := field.GetPlayerId()
+	if id == "" {
+		return "empty"
+	} else {
+		return "player" + id
+	}
 }

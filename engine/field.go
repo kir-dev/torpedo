@@ -11,3 +11,11 @@ type Field struct {
 func (f Field) IsEmpty() bool {
 	return f.ShipPart == nil
 }
+
+func (f Field) GetPlayerId() string {
+    if f.ShipPart != nil {
+        return f.ShipPart.Ship.Player.Id
+    } else {
+        return ""
+    }
+}

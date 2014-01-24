@@ -82,7 +82,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	player := engine.NewPlayer(req.FormValue("username"))
+	player := engine.NewPlayer(req.FormValue("username"), len(currentGame.Players))
 	player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
 
 	err := player.Join(currentGame)

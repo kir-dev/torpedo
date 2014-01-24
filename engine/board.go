@@ -74,7 +74,7 @@ func (board *Board) deployShips(player *Player, deployment []int) error {
 
 	ships := make([]*Ship, len(deployment))
 	for idx, size := range deployment {
-		ship := newShip(size)
+		ship := newShip(size, player)
 		row := rand.Intn(SIZE)
 		col := rand.Intn(SIZE)
 

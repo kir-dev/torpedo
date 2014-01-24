@@ -13,12 +13,16 @@ table#board td.ship {
     background-color: #818181;
 }
 
-table#board td.hit, table#board td.hitnsunk {
-    background-color: #f36420;
+table#board td.hit.player1, table#board td.hitnsunk.player1 {
+    background-color: red;
+}
+
+table#board td.hit.player2, table#board td.hitnsunk.player2 {
+    background-color: blue;
 }
 
 table#board td.miss {
-    background-color: #ecb0cb;
+    background-color: purple;
 }
 
 div.winner {

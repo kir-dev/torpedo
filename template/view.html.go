@@ -40,7 +40,7 @@
                 <tr>
                     <td>{{add $col 1}}</td>
                     {{range $row, $ := .}}
-                        <td class="field coord-{{$col}}-{{$row}} {{ship_class .}}"></td>
+                        <td class="field coord-{{$col}}-{{$row}} {{ship_class .}} {{player_class .}}"></td>
                     {{end}}
                 </tr>
             {{end}}
