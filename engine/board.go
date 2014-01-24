@@ -11,10 +11,6 @@ import (
 )
 
 const (
-	SIZE = 26
-)
-
-const (
 	ROW direction = iota
 	COLUMN
 )
@@ -43,7 +39,7 @@ func (d direction) toString() string {
 
 // Represents the board of the game
 type Board struct {
-	Fields [SIZE][SIZE]*Field
+	Fields [][]*Field
 	mu     sync.Mutex
 }
 
@@ -75,14 +71,14 @@ func (board *Board) deployShips(player *Player, deployment []int) error {
 	ships := make([]*Ship, len(deployment))
 	for idx, size := range deployment {
 		ship := newShip(size, player)
-		row := rand.Intn(SIZE)
-		col := rand.Intn(SIZE)
+		row := rand.Intn(conf.BoardSize)
+		col := rand.Intn(conf.BoardSize)
 
 		// TODO: introduce max retry count?
 		fields, err := board.chooseFields(size, row, col)
 		for err != nil {
-			row = rand.Intn(SIZE)
-			col = rand.Intn(SIZE)
+			row = rand.Intn(conf.BoardSize)
+			col = rand.Intn(conf.BoardSize)
 			fields, err = board.chooseFields(size, row, col)
 		}
 
@@ -110,12 +106,12 @@ func (board *Board) deployShips(player *Player, deployment []int) error {
 func (board *Board) chooseFields(size, row, col int) ([]*Field, error) {
 	// detect if it could be fit into the row
 	start_row := maxInt(col-(size-1), 0)
-	end_row := minInt(col+(size-1), SIZE-1)
+	end_row := minInt(col+(size-1), conf.BoardSize-1)
 	slot_row, ok_row := findEmptySlot(size, board.Fields[row][start_row:end_row])
 
 	// detect if it could be fit into the column
 	start_col := maxInt(row-(size-1), 0)
-	end_col := minInt(row+(size-1), SIZE-1)
+	end_col := minInt(row+(size-1), conf.BoardSize-1)
 	slot_col, ok_col := findEmptySlot(size, board.getColumn(col, start_col, end_col))
 
 	bothOk := ok_col && ok_row
@@ -154,7 +150,7 @@ func (b *Board) getColumn(col, start, end int) []*Field {
 
 func (board *Board) print() {
 	fmt.Print("    ")
-	for i := 0; i < SIZE; i++ {
+	for i := 0; i < conf.BoardSize; i++ {
 		letter, _ := strconv.Unquote(fmt.Sprintf("%q", i+65))
 		fmt.Print(letter)
 	}

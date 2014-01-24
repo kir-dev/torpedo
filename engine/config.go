@@ -7,8 +7,10 @@ import (
 )
 
 const (
-	TURN_DURATION_SEC = 30
-	BOT_TURN_DURATION = 5
+	TURN_DURATION_SEC  = 30
+	BOT_TURN_DURATION  = 5
+	BOARD_SIZE         = 26
+	MINIMAL_PLAYER_CNT = 2
 )
 
 var (
@@ -25,6 +27,12 @@ type config struct {
 	// In all bot games we stall the game for every bot player if this flag is
 	// set to true.
 	WaitForBots bool `json:"wait_for_bots"`
+
+	// default board size
+	BoardSize int `json:"board_size"`
+
+	// minimal players count to start game
+	MinimalPlayerCnt int `json: "minimal_player_cnt"`
 }
 
 func LoadConfig(path string) {
@@ -73,5 +81,7 @@ func defaultConfig() config {
 		TurnDurationSec:    TURN_DURATION_SEC,
 		BotTurnDurationSec: BOT_TURN_DURATION,
 		WaitForBots:        true,
+		BoardSize:          BOARD_SIZE,
+		MinimalPlayerCnt:   MINIMAL_PLAYER_CNT,
 	}
 }

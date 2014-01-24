@@ -94,7 +94,11 @@ func newGame() *Game {
 	game := Game{}
 
 	game.Id = id
-	game.Board = &Board{}
+	fields := make([][]*Field, conf.BoardSize)
+	for i := range fields {
+		fields[i] = make([]*Field, conf.BoardSize)
+	}
+	game.Board = &Board{Fields: fields}
 	game.isStarted = false
 
 	// init channels
@@ -149,7 +153,7 @@ func (g *Game) step() {
 	// wait for enough players to start
 	for {
 		numberOfPlayers := <-g.playerJoinedCh
-		if numberOfPlayers > 1 {
+		if numberOfPlayers > conf.MinimalPlayerCnt-1 {
 			g.isStarted = true
 			break
 		}
@@ -258,11 +262,11 @@ func (g *Game) hasWinner() (bool, *Player) {
 }
 
 func (g *Game) shootForAI() {
-	row, col := rand.Intn(SIZE), rand.Intn(SIZE)
+	row, col := rand.Intn(conf.BoardSize), rand.Intn(conf.BoardSize)
 	result := g.Board.shootAt(row, col, nil)
 
 	for result == INVALID {
-		row, col = rand.Intn(SIZE), rand.Intn(SIZE)
+		row, col = rand.Intn(conf.BoardSize), rand.Intn(conf.BoardSize)
 		result = g.Board.shootAt(row, col, nil)
 	}
 
