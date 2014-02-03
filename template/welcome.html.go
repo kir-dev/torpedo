@@ -1,8 +1,11 @@
 <html>
     <head>
         <title>Kir-Dev multi torpedó</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="/public/css/site.css">
     </head>
     <body>
+        <div id="header_decorator"></div>
         <h1>Torpedó játék</h1>
 
         <form action="/join" method="POST">

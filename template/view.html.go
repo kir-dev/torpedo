@@ -1,14 +1,17 @@
 <html>
 <head>
     <title>Megjelenítő</title>
+    <link href='http://fonts.googleapis.com/css?family=Audiowide|Open+Sans:400,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="/public/css/site.css">
 </head>
 <body>
+    <div id="header_decorator"></div>
+
     {{if hasWinner .Winner}}
         <a href="/games">Vissza az archívumhoz</a> <br/>
     {{end}}
     <div id="player-list">
-        <p>Játékosok:</p>
+        <p class="title">Játékosok:</p>
         <ul>
             {{with .Players}}
                 {{range .}}
@@ -16,6 +19,7 @@
                 {{end}}
             {{end}}
         </ul>
+        <div class="clearfix"></div>
     </div>
 
 
@@ -30,6 +34,7 @@
     <div id="players">
         <p>Jelenlegi játékos: <span id="current-player"></span></p>
         <p>Következő játékos: <span id="next-player"></span></p>
+        <div class="clearfix"></div>
     </div>
 
     <table id="board">
