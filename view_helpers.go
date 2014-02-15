@@ -15,11 +15,12 @@ const (
 
 func utilFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"add":         add,
-		"letters":     letters,
-		"hasWinner":   hasWinner,
-		"ship_color":  getShipColor,
-		"ship_color2": getShipColorOnShootPage,
+		"add":           add,
+		"letters":       letters,
+		"hasWinner":     hasWinner,
+		"ship_color":    getShipColor,
+		"ship_color2":   getShipColorOnShootPage,
+		"num_to_letter": getLetterForNumber,
 	}
 }
 
@@ -49,7 +50,7 @@ func letters(count int, tag string) template.HTML {
 		if i < 0 {
 			t.Execute(&buffer, nil)
 		} else {
-			t.Execute(&buffer, string(i+65))
+			t.Execute(&buffer, getLetterForNumber(i))
 		}
 	}
 
@@ -75,4 +76,8 @@ func getShipColorOnShootPage(field *engine.Field, player *engine.Player) string 
 		return CELL_PLAYER_COLOR
 	}
 	return getShipColor(field)
+}
+
+func getLetterForNumber(num int) string {
+	return string(num + 65)
 }

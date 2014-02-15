@@ -89,3 +89,7 @@ div.winner {
 .clearfix {
     clear: both;
 }
+
+span.cellnum {
+    color: #999;
+}

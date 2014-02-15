@@ -30,7 +30,9 @@
                     <tr>
                         <td>{{add $col 1}}</td>
                         {{range $row, $ := .}}
-                            <td class="field coord-{{$col}}-{{$row}}" style="background-color: {{ship_color2 . $player}};" ng-click="shoot({{$col}},{{$row}})"></td>
+                            <td class="field coord-{{$col}}-{{$row}}" style="background-color: {{ship_color2 . $player}};" ng-click="shoot({{$col}},{{$row}})">
+                                <span class="cellnum">{{num_to_letter $row}}{{add $col 1}}</span>
+                            </td>
                         {{end}}
                     </tr>
                 {{end}}
