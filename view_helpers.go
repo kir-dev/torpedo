@@ -8,16 +8,18 @@ import (
 )
 
 const (
-	CELL_BASE_COLOR = "white"
-	CELL_MISS_COLOR = "gray"
+	CELL_BASE_COLOR   = "white"
+	CELL_MISS_COLOR   = "gray"
+	CELL_PLAYER_COLOR = "lime"
 )
 
 func utilFuncMap() template.FuncMap {
 	return template.FuncMap{
-		"add":        add,
-		"letters":    letters,
-		"hasWinner":  hasWinner,
-		"ship_color": getShipColor,
+		"add":         add,
+		"letters":     letters,
+		"hasWinner":   hasWinner,
+		"ship_color":  getShipColor,
+		"ship_color2": getShipColorOnShootPage,
 	}
 }
 
@@ -66,4 +68,11 @@ func getShipColor(field *engine.Field) string {
 	}
 
 	return CELL_BASE_COLOR
+}
+
+func getShipColorOnShootPage(field *engine.Field, player *engine.Player) string {
+	if !field.IsHit && field.GetPlayerId() == player.Id {
+		return CELL_PLAYER_COLOR
+	}
+	return getShipColor(field)
 }

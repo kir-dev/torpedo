@@ -40,6 +40,12 @@ var (
 	templates = template.New("root")
 )
 
+type ShootResult struct {
+	Feedback engine.HitResult
+	Game     *engine.Game
+	Player   *engine.Player
+}
+
 // register handlers for routes
 func init() {
 
@@ -108,10 +114,6 @@ func viewHandler(rw http.ResponseWriter, req *http.Request) {
 // shoot handler
 func shootHandler(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(PLAYER_ID_COOKIE)
-	type ShootResult struct {
-		Feedback engine.HitResult
-		Game     *engine.Game
-	}
 
 	// the play might not be registered
 	if err != nil {
@@ -122,6 +124,7 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 
 	var shootResult ShootResult
 	shootResult.Game = currentGame
+	shootResult.Player = currentGame.GetPlayerById(cookie.Value)
 
 	if r.Method == "POST" {
 		// check if the player is up

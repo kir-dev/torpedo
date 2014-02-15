@@ -86,6 +86,16 @@ func (g *Game) DiscardView(view ViewReporter) {
 	g.views = append(g.views[:index], g.views[index+1:]...)
 }
 
+func (g *Game) GetPlayerById(id string) *Player {
+	for _, player := range g.Players {
+		if player.Id == id {
+			return player
+		}
+	}
+
+	return nil
+}
+
 // Creates a new game, but does not start it.
 func newGame() *Game {
 	id := generateId()

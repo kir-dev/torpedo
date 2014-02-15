@@ -20,6 +20,7 @@
         </div>
     </div>
 
+    {{ $player := .Player }}
     {{with .Game}}
         <table id="board" class="center-table">
             {{with .Board}}
@@ -29,7 +30,7 @@
                     <tr>
                         <td>{{add $col 1}}</td>
                         {{range $row, $ := .}}
-                            <td class="field coord-{{$col}}-{{$row}}" style="background-color: {{ship_color .}};" ng-click="shoot({{$col}},{{$row}})"></td>
+                            <td class="field coord-{{$col}}-{{$row}}" style="background-color: {{ship_color2 . $player}};" ng-click="shoot({{$col}},{{$row}})"></td>
                         {{end}}
                     </tr>
                 {{end}}
