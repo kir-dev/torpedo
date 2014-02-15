@@ -16,7 +16,7 @@ func findEmptySlot(size int, fields []*Field) (gap, bool) {
 			break
 		}
 
-		if f.IsEmpty() {
+		if f.IsEmpty() && !f.IsHit {
 			if slot.start < 0 {
 				slot.start = i
 				slot.end = i

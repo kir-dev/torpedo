@@ -2,6 +2,7 @@
 <head>
     <title>Megjelenítő</title>
     <link href='http://fonts.googleapis.com/css?family=Audiowide|Open+Sans:400,300&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/public/css/site.css">
 </head>
 <body>

@@ -22,6 +22,10 @@ const (
 	INVALID  = HitResult("invalid")
 )
 
+const (
+	MAX_ERROR_COUNT = 100
+)
+
 type HitResult string
 
 type direction int
@@ -74,12 +78,13 @@ func (board *Board) deployShips(player *Player, deployment []int) error {
 		row := rand.Intn(conf.BoardSize)
 		col := rand.Intn(conf.BoardSize)
 
-		// TODO: introduce max retry count?
+		err_cntr := 0
 		fields, err := board.chooseFields(size, row, col)
-		for err != nil {
+		for err != nil && err_cntr < MAX_ERROR_COUNT {
 			row = rand.Intn(conf.BoardSize)
 			col = rand.Intn(conf.BoardSize)
 			fields, err = board.chooseFields(size, row, col)
+			err_cntr += 1
 		}
 
 		if len(fields) != len(ship.Parts) {
