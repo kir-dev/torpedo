@@ -10,11 +10,12 @@ type Player struct {
 	IsBot bool
 	Ships []*Ship
 	Id    string
+	Color Color
 }
 
 // creates a new player
 func NewPlayer(name string, playersCount int) *Player {
-	return &Player{name, false, nil, strconv.Itoa(playersCount + 1)}
+	return &Player{name, false, nil, strconv.Itoa(playersCount + 1), getNextColor()}
 }
 
 // Adds a player to the registry.

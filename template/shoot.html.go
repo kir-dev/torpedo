@@ -15,7 +15,7 @@
 <body ng-controller="ShootCtrl" ng-init="init()">
 
     <div class="row text-center">
-        <div class="span12"> 
+        <div class="span12">
             <h1><span class="label label-info" ng-bind="shootResult"></span></h1>
         </div>
     </div>
@@ -29,7 +29,7 @@
                     <tr>
                         <td>{{add $col 1}}</td>
                         {{range $row, $ := .}}
-                            <td class="field coord-{{$col}}-{{$row}} {{ship_class .}} {{player_class .}}" ng-click="shoot({{$col}},{{$row}})"></td>
+                            <td class="field coord-{{$col}}-{{$row}}" style="background-color: {{ship_color .}};" ng-click="shoot({{$col}},{{$row}})"></td>
                         {{end}}
                     </tr>
                 {{end}}

@@ -320,4 +320,6 @@ func (g *Game) cleanUp() {
 	// close channels
 	close(g.playerJoinedCh)
 	// NOTE: g.endTurn was closed at the end of the last turn
+
+	ResetColors()
 }

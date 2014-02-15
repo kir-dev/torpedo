@@ -7,13 +7,17 @@ import (
 	"html/template"
 )
 
+const (
+	CELL_BASE_COLOR = "white"
+	CELL_MISS_COLOR = "gray"
+)
+
 func utilFuncMap() template.FuncMap {
 	return template.FuncMap{
 		"add":        add,
 		"letters":    letters,
 		"hasWinner":  hasWinner,
-		"ship_class": getShipCSSClass,
-		"player_class": getPlayerCSSClass,
+		"ship_color": getShipColor,
 	}
 }
 
@@ -50,22 +54,16 @@ func letters(count int, tag string) template.HTML {
 	return template.HTML(buffer.String())
 }
 
-func getShipCSSClass(field *engine.Field) string {
+func getShipColor(field *engine.Field) string {
 	if field.IsHit {
 		if field.IsEmpty() {
-			return "miss"
+			return CELL_MISS_COLOR
 		}
-		return "hit"
+		if field.ShipPart.Ship.IsSunken() {
+			return field.ShipPart.Ship.Player.Color.HitAndSunk
+		}
+		return field.ShipPart.Ship.Player.Color.Hit
 	}
 
-	return ""
-}
-
-func getPlayerCSSClass(field *engine.Field) string {
-	id := field.GetPlayerId()
-	if id == "" {
-		return "empty"
-	} else {
-		return "player" + id
-	}
+	return CELL_BASE_COLOR
 }
