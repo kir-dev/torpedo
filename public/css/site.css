@@ -32,6 +32,7 @@ body {
     padding: 10px;
     border-radius: 10px;
     background: #FF8000;
+    margin-bottom: 3px;
 }
 
 #player-list span.player-color-info {

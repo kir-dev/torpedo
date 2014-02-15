@@ -31,10 +31,22 @@ type viewMsg struct {
 }
 
 func (v *viewReporter) ReportHitResult(row, col int, result engine.HitResult) {
+	var color string
+	switch result {
+	case engine.HIT:
+		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.Hit
+	case engine.MISS:
+		color = CELL_MISS_COLOR
+	case engine.HIT_SUNK:
+		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.HitAndSunk
+	case engine.INVALID:
+		color = ""
+	}
+
 	values := map[string]interface{}{
 		"row":    row,
 		"col":    col,
-		"result": result,
+		"result": color,
 	}
 
 	v.send(MSG_HITRESULT, values)

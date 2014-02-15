@@ -46,7 +46,9 @@ $(function () {
     }
 
     function shot(payload) {
-        $(".coord-" + payload.row + "-" + payload.col).addClass(payload.result);
+        if (payload.result) {
+            $(".coord-" + payload.row + "-" + payload.col).attr("style", "background-color:"+payload.result+";")
+        }
     }
 
     function time(elapsed) {
