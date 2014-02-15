@@ -7,34 +7,40 @@
 <body>
     <div id="header_decorator"></div>
 
-    {{if hasWinner .Winner}}
-        <a href="/games">Vissza az archívumhoz</a> <br/>
-    {{end}}
-    <div id="player-list">
-        <p class="title">Játékosok:</p>
-        <ul>
-            {{with .Players}}
-                {{range .}}
-                    <li>{{.Name}}</li>
+    <div id="game-info">
+        {{if hasWinner .Winner}}
+            <a href="/games">Vissza az archívumhoz</a> <br/>
+        {{end}}
+        <div id="player-list">
+            <p class="title">Játékosok:</p>
+            <ul>
+                {{with .Players}}
+                    {{range .}}
+                        <li>
+                            {{.Name}}
+                            (talált: <span class="player-color-info" style="background-color: {{.Color.Hit}};"></span>,
+                            talált &amp; süllyedt: <span class="player-color-info" style="background-color: {{.Color.HitAndSunk}};"></span>)
+
+                        </li>
+                    {{end}}
                 {{end}}
-            {{end}}
-        </ul>
-        <div class="clearfix"></div>
-    </div>
+            </ul>
+            <div class="clearfix"></div>
+        </div>
 
+        <div class="winner hidden">
+            A nyertes: <span>[name]</span>
+        </div>
 
-    <div class="winner hidden">
-        A nyertes: <span>[name]</span>
-    </div>
+        <div id="time">
+            A körből hátralevő idő: <span id="elapsed-time">0</span> s
+        </div>
 
-    <div id="time">
-        A körből hátralevő idő: <span id="elapsed-time">0</span> s
-    </div>
-
-    <div id="players">
-        <p>Jelenlegi játékos: <span id="current-player"></span></p>
-        <p>Következő játékos: <span id="next-player"></span></p>
-        <div class="clearfix"></div>
+        <div id="players">
+            <p>Jelenlegi játékos: <span id="current-player"></span></p>
+            <p>Következő játékos: <span id="next-player"></span></p>
+            <div class="clearfix"></div>
+        </div>
     </div>
 
     <table id="board">
