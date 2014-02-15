@@ -9,7 +9,7 @@ import (
 const (
 	TURN_DURATION_SEC  = 30
 	BOT_TURN_DURATION  = 5
-	BOARD_SIZE         = 26
+	BOARD_SIZE         = 15
 	MINIMAL_PLAYER_CNT = 2
 )
 
