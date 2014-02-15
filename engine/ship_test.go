@@ -13,7 +13,7 @@ func TestShipIsSunken(t *testing.T) {
 		nil,
 	}
 
-	if !s.isSunken() {
+	if !s.IsSunken() {
 		t.Error("Ship should be sunken.")
 	}
 }
@@ -27,7 +27,7 @@ func TestShipIsSunkenWithOneUnbrokenPart(t *testing.T) {
 		nil,
 	}
 
-	if s.isSunken() {
+	if s.IsSunken() {
 		t.Error("Ship should not be sunken.")
 	}
 

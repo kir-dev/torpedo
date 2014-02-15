@@ -38,7 +38,7 @@ func (player *Player) Join(game *Game) error {
 func (p Player) getWorkingShips() []*Ship {
 	ships := make([]*Ship, 0, len(p.Ships))
 	for _, ship := range p.Ships {
-		if !ship.isSunken() {
+		if !ship.IsSunken() {
 			ships = append(ships, ship)
 		}
 	}

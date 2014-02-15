@@ -39,7 +39,7 @@ func newShip(numberOfParts int, p *Player) *Ship {
 }
 
 // Determines whether the ship has sunken or not
-func (s Ship) isSunken() bool {
+func (s Ship) IsSunken() bool {
 	sunken := true
 	for _, part := range s.Parts {
 		if !part.IsHit {

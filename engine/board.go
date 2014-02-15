@@ -206,7 +206,7 @@ func (b *Board) shootAt(row, col int, endTurn chan<- int) HitResult {
 	field.IsHit = true
 	if !field.IsEmpty() {
 		field.ShipPart.IsHit = true
-		if field.ShipPart.Ship.isSunken() {
+		if field.ShipPart.Ship.IsSunken() {
 			result = HIT_SUNK
 		} else {
 			result = HIT
