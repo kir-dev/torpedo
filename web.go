@@ -96,7 +96,7 @@ func joinHandler(rw http.ResponseWriter, req *http.Request) {
 		})
 	} else {
 		http.SetCookie(rw, &http.Cookie{Name: PLAYER_ID_COOKIE, Value: player.Id, HttpOnly: true})
-		http.Redirect(rw, req, "/view", http.StatusFound)
+		http.Redirect(rw, req, "/shoot", http.StatusFound)
 	}
 }
 
