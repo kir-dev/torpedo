@@ -46,8 +46,10 @@ $(function () {
     }
 
     function shot(payload) {
-        if (payload.result) {
+        if (!payload.isSunken) {
             $(".coord-" + payload.row + "-" + payload.col).attr("style", "background-color:"+payload.result+";")
+        } else {
+            window.location.reload();
         }
     }
 
@@ -72,6 +74,7 @@ $(function () {
     }
 
     function joined(player) {
-        $("#player-list ul").append("<li>" + player + "</li>")
+        /*$("#player-list ul").append("<li>" + player + "</li>");*/
+        window.location.reload();
     }
 });

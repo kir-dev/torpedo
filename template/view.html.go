@@ -27,6 +27,7 @@
                     </table>
             </div>
             <div class="col-md-4">
+                    <img class="kirdevlogo" src="public/img/logo.png"/>
                     <div id="game-info">
                         {{if hasWinner .Winner}}
                             <a href="/games">Vissza az archívumhoz</a> <br/>
@@ -61,6 +62,9 @@
                             <p>Következő játékos: <span id="next-player"></span></p>
                             <div class="clearfix"></div>
                         </div>
+
+                        <h1>Csatlakozás:</h1>
+                        <h2>tinyurl.com/kdtorpedo</h2>
                     </div>
             </div>
         </div>

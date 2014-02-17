@@ -32,6 +32,7 @@ type viewMsg struct {
 
 func (v *viewReporter) ReportHitResult(row, col int, result engine.HitResult) {
 	var color string
+	isSunken := false
 	switch result {
 	case engine.HIT:
 		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.Hit
@@ -39,14 +40,16 @@ func (v *viewReporter) ReportHitResult(row, col int, result engine.HitResult) {
 		color = CELL_MISS_COLOR
 	case engine.HIT_SUNK:
 		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.HitAndSunk
+		isSunken = true
 	case engine.INVALID:
 		color = ""
 	}
 
 	values := map[string]interface{}{
-		"row":    row,
-		"col":    col,
-		"result": color,
+		"row":      row,
+		"col":      col,
+		"result":   color,
+		"isSunken": isSunken,
 	}
 
 	v.send(MSG_HITRESULT, values)
