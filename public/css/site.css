@@ -18,6 +18,10 @@ body {
    font-size: 22px;
 }
 
+#game-info {
+    padding-top: 50px;
+}
+
 #player-list {
     padding: 10px;
     background: #E6E6E6;
