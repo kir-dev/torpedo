@@ -35,11 +35,11 @@ func (v *viewReporter) ReportHitResult(row, col int, result engine.HitResult) {
 	isSunken := false
 	switch result {
 	case engine.HIT:
-		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.Hit
+		color = currentGame.Board.Fields[row][col].ShipPart.Ship.Player.Color.Hit
 	case engine.MISS:
 		color = CELL_MISS_COLOR
 	case engine.HIT_SUNK:
-		color = currentGame.GetPlayerById(currentGame.CurrentPlayerId).Color.HitAndSunk
+		color = currentGame.Board.Fields[row][col].ShipPart.Ship.Player.Color.HitAndSunk
 		isSunken = true
 	case engine.INVALID:
 		color = ""
