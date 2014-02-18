@@ -121,24 +121,8 @@ func TestHasWinner(t *testing.T) {
 
 /********* ViewReporter mock ******/
 
-type viewReporterMock struct{}
-
-func (viewReporterMock) ReportHitResult(row, col int, result HitResult) {
-}
-
-func (viewReporterMock) ReportGameStarted() {
-}
-
-func (viewReporterMock) ReportGameOver(winner *Player) {
-}
-
-func (viewReporterMock) ReportElapsedTime(elapsed float64) {
-}
-
-func (viewReporterMock) ReportPlayerTurnStart(current *Player, next *Player) {
-}
-
-func (viewReporterMock) ReportPlayerJoined(player *Player) {
+type viewReporterMock struct {
+	ViewReporter
 }
 
 /****** End of ViewReporter mock **/
