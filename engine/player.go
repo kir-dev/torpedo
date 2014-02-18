@@ -2,7 +2,6 @@ package engine
 
 import (
 	"github.com/kir-dev/torpedo/util"
-	"strconv"
 )
 
 type Player struct {
@@ -14,8 +13,8 @@ type Player struct {
 }
 
 // creates a new player
-func NewPlayer(name string, playersCount int) *Player {
-	return &Player{name, false, nil, strconv.Itoa(playersCount + 1), getNextColor()}
+func NewPlayer(name string) *Player {
+	return &Player{name, false, nil, generateId(), getNextColor()}
 }
 
 // Adds a player to the registry.

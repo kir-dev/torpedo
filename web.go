@@ -73,22 +73,12 @@ func rootHandler(w http.ResponseWriter, req *http.Request) {
 
 // join handler
 func joinHandler(rw http.ResponseWriter, req *http.Request) {
-	canJoin := true
-
-	gid, errGid := req.Cookie(GAME_ID_COOKIE)
-	_, errPid := req.Cookie(PLAYER_ID_COOKIE)
-
-	// has the current game's id and the player id as well -> cannot join
-	if errGid == nil && gid.Value == currentGame.Id && errPid == nil {
-		canJoin = false
-	}
-
-	if !canJoin {
+	if !canJoin(req) {
 		renderError(rw, util.Errorf("You are already playing! You cannot join twice."))
 		return
 	}
 
-	player := engine.NewPlayer(req.FormValue("username"), len(currentGame.Players))
+	player := engine.NewPlayer(req.FormValue("username"))
 	player.IsBot = covertCheckboxValueToBool(req.FormValue("is_robot"))
 
 	err := player.Join(currentGame)
@@ -262,4 +252,23 @@ type errorView struct {
 	Title   string
 	Message string
 	IsDev   bool
+}
+
+// A user can join if he has the correct game id and either he does not have
+// a player id or his player id is not in the game.
+func canJoin(req *http.Request) bool {
+	gid, errGid := req.Cookie(GAME_ID_COOKIE)
+	pid, errPid := req.Cookie(PLAYER_ID_COOKIE)
+
+	// has game id and its
+	if errGid == nil && gid.Value == currentGame.Id {
+		// has player id in cookie and current game has the player
+		if errPid == nil && currentGame.GetPlayerById(pid.Value) != nil {
+			return false
+		}
+
+		return true
+	}
+
+	return false
 }
