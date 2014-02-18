@@ -64,7 +64,7 @@
                         </div>
 
                         <h1>Csatlakozás:</h1>
-                        <h2>tinyurl.com/kdtorpedo</h2>
+                        <h2>http://stewie.sch.bme.hu:6060</h2>
                     </div>
             </div>
         </div>
