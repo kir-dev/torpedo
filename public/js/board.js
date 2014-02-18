@@ -46,11 +46,7 @@ $(function () {
     }
 
     function shot(payload) {
-        if (!payload.isSunken) {
-            $(".coord-" + payload.row + "-" + payload.col).attr("style", "background-color:"+payload.result+";")
-        } else {
-            window.location.reload();
-        }
+        $(".coord-" + payload.row + "-" + payload.col).attr("style", "background-color:"+payload.result+";")
     }
 
     function time(elapsed) {
