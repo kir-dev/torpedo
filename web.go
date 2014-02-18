@@ -185,6 +185,7 @@ func quitHandler(w http.ResponseWriter, r *http.Request) {
 	cookie.MaxAge = -1
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusFound)
+	util.LogInfo("Player with %s id left the game.", cookie.Value)
 }
 
 /**** utility methods ****/

@@ -15,7 +15,7 @@
 <body ng-controller="ShootCtrl" ng-init="init()">
 
     <div class="row text-center">
-        <div class="span12">
+        <div class="col-md-12">
             <h1><span class="label label-info" ng-bind="shootResult"></span></h1>
         </div>
     </div>
@@ -39,6 +39,12 @@
             {{end}}
         </table>
     {{end}}
+
+    <div class="row text-center" style="margin-top: 20px;">
+        <div class="col-md-12">
+            <a href="/quit" class="btn btn-default btn-lg">Kilépés a játékból</a>
+        </div>
+    </div>
 
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.1/angular.min.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.10.1.min.js"></script>

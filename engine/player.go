@@ -31,7 +31,7 @@ func (player *Player) Join(game *Game) error {
 
 	game.addPlayer(player)
 
-	util.LogInfo("Player with name %s has joined the game.", player.Name)
+	util.LogInfo("Player with name %s (id: %s) has joined the game.", player.Name, player.Id)
 	return nil
 }
 
