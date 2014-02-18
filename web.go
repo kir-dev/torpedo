@@ -116,6 +116,11 @@ func shootHandler(w http.ResponseWriter, r *http.Request) {
 	shootResult.Game = currentGame
 	shootResult.Player = currentGame.GetPlayerById(cookie.Value)
 
+	if shootResult.Player == nil {
+		fmt.Fprint(w, "No player registered with the given id. Go to home page and register.")
+		return
+	}
+
 	if r.Method == "POST" {
 		// check if the player is up
 		if currentGame.CurrentPlayerId != cookie.Value {
