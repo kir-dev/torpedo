@@ -41,7 +41,6 @@
                                             {{.Name}}
                                             (talált: <span class="player-color-info" style="background-color: {{.Color.Hit}};"></span>,
                                             talált &amp; süllyedt: <span class="player-color-info" style="background-color: {{.Color.HitAndSunk}};"></span>)
-
                                         </li>
                                     {{end}}
                                 {{end}}

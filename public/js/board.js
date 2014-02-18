@@ -70,7 +70,13 @@ $(function () {
     }
 
     function joined(player) {
-        /*$("#player-list ul").append("<li>" + player + "</li>");*/
-        window.location.reload();
+        var html = ['<li>',
+            player.name,
+            '(talált: <span class="player-color-info" style="background-color: ' + player.hitColor + ';"></span>,',
+            'talált &amp; süllyedt: <span class="player-color-info" style="background-color: '+ player.sunkColor +';"></span>)',
+            '</li>'
+            ].join('\n');
+
+        $("#player-list ul").append(html);
     }
 });

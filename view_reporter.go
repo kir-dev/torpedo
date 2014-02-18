@@ -68,7 +68,12 @@ func (v *viewReporter) ReportElapsedTime(elapsed float64) {
 }
 
 func (v *viewReporter) ReportPlayerJoined(player *engine.Player) {
-	v.send(MSG_PLAYERJOINED, player.Name)
+	value := map[string]interface{}{
+		"name":      player.Name,
+		"hitColor":  player.Color.Hit,
+		"sunkColor": player.Color.Hit,
+	}
+	v.send(MSG_PLAYERJOINED, value)
 }
 
 func (v *viewReporter) ReportPlayerTurnStart(current *engine.Player, next *engine.Player) {
