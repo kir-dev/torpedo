@@ -200,21 +200,20 @@ func computeShipDeployment(boardAverage float64) []int {
 }
 
 // Shoot at a coordinate on the game's board
-func (b *Board) shootAt(row, col int, endTurn chan<- int) HitResult {
+func (b *Board) shootAt(row, col int, endTurn chan<- int) (HitResult, []*ShipPart) {
 	field := b.Fields[row][col]
 
 	if field.IsHit {
-		return INVALID
+		return INVALID, nil
 	}
 
-	result := MISS
 	field.IsHit = true
 	if !field.IsEmpty() {
 		field.ShipPart.IsHit = true
 		if field.ShipPart.Ship.IsSunken() {
-			result = HIT_SUNK
+			return HIT_SUNK, field.ShipPart.Ship.Parts
 		} else {
-			result = HIT
+			return HIT, nil
 		}
 	}
 
@@ -223,5 +222,5 @@ func (b *Board) shootAt(row, col int, endTurn chan<- int) HitResult {
 		close(endTurn)
 	}
 
-	return result
+	return MISS, nil
 }

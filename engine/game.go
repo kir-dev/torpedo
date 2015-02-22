@@ -5,6 +5,9 @@ import (
 	"math/rand"
 	"sync"
 	"time"
+	
+
+	"fmt"
 )
 
 // Listener interface. Implement this interface, and register views via
@@ -56,8 +59,17 @@ func (g *Game) Start() {
 }
 
 func (g *Game) Shoot(row, col int) HitResult {
-	result := g.Board.shootAt(row, col, g.endTurn)
+	result, shipParts := g.Board.shootAt(row, col, g.endTurn)
+
 	g.notifyViewsAfterShot(row, col, result)
+	if result == HitResult("hitnsunk"){
+		for _, shipPart := range shipParts{
+			row, col := getPositionByField(g.Board, shipPart.Field)
+			g.notifyViewsAfterShot( row, col, result)
+		}
+	}/**/
+	
+	fmt.Printf("%s\n", shipParts)
 	return result
 }
 
@@ -273,11 +285,11 @@ func (g *Game) hasWinner() (bool, *Player) {
 
 func (g *Game) shootForAI() {
 	row, col := rand.Intn(conf.BoardSize), rand.Intn(conf.BoardSize)
-	result := g.Board.shootAt(row, col, nil)
+	result, _ := g.Board.shootAt(row, col, nil)
 
 	for result == INVALID {
 		row, col = rand.Intn(conf.BoardSize), rand.Intn(conf.BoardSize)
-		result = g.Board.shootAt(row, col, nil)
+		result, _ = g.Board.shootAt(row, col, nil)
 	}
 
 	g.notifyViewsAfterShot(row, col, result)
@@ -332,4 +344,15 @@ func (g *Game) cleanUp() {
 	// NOTE: g.endTurn was closed at the end of the last turn
 
 	ResetColors()
+}
+
+func getPositionByField(board *Board, field *Field) (int, int) {
+    for row, curRow := range board.Fields {
+        for col, current := range curRow {
+            if current == field {
+                return row, col
+            }
+        }
+    }
+    return -1, -1
 }
