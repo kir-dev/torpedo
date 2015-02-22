@@ -5,9 +5,6 @@ import (
 	"math/rand"
 	"sync"
 	"time"
-	
-
-	"fmt"
 )
 
 // Listener interface. Implement this interface, and register views via
@@ -67,9 +64,8 @@ func (g *Game) Shoot(row, col int) HitResult {
 			row, col := getPositionByField(g.Board, shipPart.Field)
 			g.notifyViewsAfterShot( row, col, result)
 		}
-	}/**/
+	}
 	
-	fmt.Printf("%s\n", shipParts)
 	return result
 }
 
