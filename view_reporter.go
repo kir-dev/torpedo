@@ -71,7 +71,7 @@ func (v *viewReporter) ReportPlayerJoined(player *engine.Player) {
 	value := map[string]interface{}{
 		"name":      player.Name,
 		"hitColor":  player.Color.Hit,
-		"sunkColor": player.Color.Hit,
+		"sunkColor": player.Color.HitAndSunk,
 	}
 	v.send(MSG_PLAYERJOINED, value)
 }
