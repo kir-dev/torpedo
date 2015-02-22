@@ -96,6 +96,26 @@ func (g *Game) GetPlayerById(id string) *Player {
 	return nil
 }
 
+func (g *Game) RemovePlayer(id string) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+
+	var index int
+	index = -1
+
+	// find the player in question
+	for i, v := range g.Players {
+		if v.Name == id {
+			index = i
+		}
+	}
+
+	// delete it
+	if(index > -1) {
+		g.Players = append(g.Players[:index], g.Players[index+1:]...)
+	}
+}
+
 // Creates a new game, but does not start it.
 func newGame() *Game {
 	id := generateId()

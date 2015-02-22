@@ -30,6 +30,7 @@ var (
 		"/quit":        quitHandler,
 		"/games":       historyHandler,
 		"/games/{gid}": historyHandler,
+		"/remove/{id}": removeHandler,
 	}
 	postRoutesMap = map[string]http.HandlerFunc{
 		"/join":  joinHandler,
@@ -191,6 +192,15 @@ func quitHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusFound)
 	util.LogInfo("Player with %s id left the game.", cookie.Value)
+}
+
+func removeHandler(w http.ResponseWriter, r *http.Request) {
+	urlPattern := mux.Vars(r)
+	id := urlPattern["id"]
+
+	if id != "" {
+		currentGame.RemovePlayer(id)
+	}
 }
 
 /**** utility methods ****/
