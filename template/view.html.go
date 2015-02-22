@@ -48,7 +48,7 @@
                             <div class="clearfix"></div>
                         </div>
 
-                        <div class="winner hidden">
+                        <div class="winner" style="display:none">
                             A nyertes: <span>[name]</span>
                         </div>
 
